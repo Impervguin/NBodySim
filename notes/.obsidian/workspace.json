@@ -1,0 +1,193 @@
+{
+  "main": {
+    "id": "c33d702c08368e58",
+    "type": "split",
+    "children": [
+      {
+        "id": "2c13ab92530e8886",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7c167f4577daea05",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Задача n тел.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "0d81e79400cb321a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Метод Эйлера.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "608a1f94b8fa782b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Задача n тел.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "8a70a45203cc286f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Явный Метод Адамса 2-го порядка.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "cf4af8c703e65f95",
+    "type": "split",
+    "children": [
+      {
+        "id": "9144f3df398afcb3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a79c542c47db58b5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "4688f885cc12c6ff",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "2dc99d17d90d922a",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d72557dd90ed1731",
+    "type": "split",
+    "children": [
+      {
+        "id": "b772b78eb8d7b606",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fb8f72af6244d03f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Задача n тел.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "264558dcee3544e2",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Задача n тел.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "93f1ebeb14571156",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "f86b08caa4bef12c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Задача n тел.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "608a1f94b8fa782b",
+  "lastOpenFiles": [
+    "Метод Рунге-Кутте 2-го и 4-го порядка.md",
+    "Явный Метод Адамса 2-го порядка.md",
+    "Задача n тел.md",
+    "Метод Эйлера.md"
+  ]
+}
