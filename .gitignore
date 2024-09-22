@@ -33,3 +33,9 @@
 
 # obsidian
 *.obsidian/*
+
+# latex
+*.aux
+*.toc
+*.log
+*.synctex.gz
