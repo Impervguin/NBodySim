@@ -17,8 +17,12 @@ func (sim *NBodySim) SolveStep() error {
 		return err
 	}
 	sim.solver.UpdateSelf(uNBody)
-	sim.nbody = uNBody
+	sim.nbody.UpdateSelf(uNBody)
 	return nil
 }
 
 func (sim *NBodySim) GetNBody() *NBody { return sim.nbody }
+
+func (sim *NBodySim) SetSolver(solver NBodySolver) {
+	sim.solver = solver
+}

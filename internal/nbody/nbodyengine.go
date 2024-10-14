@@ -19,7 +19,7 @@ func (e *IterativeNbodyEngine) Calculate(nbody *NBody, fn calculateBody, dt floa
 		if err != nil {
 			return nil, err
 		}
-		uNBody.bodies = append(uNBody.bodies, ubody)
+		uNBody.AddBody(ubody)
 	}
 	return uNBody, nil
 }

@@ -32,7 +32,7 @@ func (es *EulerSolver) CalculateBody(body *Body, dt float64) (*Body, error) {
 	ubody.Position.Add(vectormath.MultiplyVectorScalar(body.Velocity, dt))
 	force := vectormath.NewVector3d(0, 0, 0)
 	for _, influencer := range es.nbody.bodies {
-		if influencer != body {
+		if influencer.Id != body.Id {
 			force.Add(Body2Force(body, influencer))
 		}
 	}
@@ -41,5 +41,5 @@ func (es *EulerSolver) CalculateBody(body *Body, dt float64) (*Body, error) {
 }
 
 func (es *EulerSolver) UpdateSelf(nbody *NBody) {
-	es.nbody = nbody
+	es.nbody = nbody.Copy()
 }
