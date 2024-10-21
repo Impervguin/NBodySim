@@ -1,35 +1,16 @@
 package main
 
 import (
-	"NBodySim/internal/nbody"
+	"NBodySim/internal/transform"
 	"NBodySim/internal/vectormath"
 	"fmt"
+	"math"
 )
 
 func main() {
-	nb := nbody.NewNBody([]*nbody.Body{
-		{
-			Position: vectormath.NewVector3d(0, 0, 0),
-			Velocity: vectormath.NewVector3d(0, 0, 0),
-			Mass:     1e15,
-		},
-		{
-			Position: vectormath.NewVector3d(100, 0, 0),
-			Velocity: vectormath.NewVector3d(0, 0, 0),
-			Mass:     1e15,
-		},
-	})
-	sim := nbody.NewNBodySim(nb, nbody.NewEulerSolver(nb), nbody.NewIterativeNbodyEngine(), 0.1)
-	fmt.Println(sim.GetNBody())
-	for i := 0; i < 100; i++ {
-		err := sim.SolveStep()
-		if err != nil {
-			panic(err)
-		}
-		for _, body := range sim.GetNBody().GetBodies() {
-			fmt.Print(body.ToString(), " ")
-		}
-		fmt.Println()
-	}
-
+	p1 := vectormath.NewVector3d(1, 0.5, 0.3)
+	action := transform.NewRotateAction(vectormath.NewVector3d(math.Pi/4, 0, 0))
+	// action := transform.NewScaleActionCenter(vectormath.NewVector3d(1, 1, 0), vectormath.NewVector3d(5, 2, 3))
+	action.ApplyToVector(p1)
+	fmt.Println(p1.X, p1.Y, p1.Z)
 }

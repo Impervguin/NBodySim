@@ -108,3 +108,7 @@ func (v *Vector3d) ToSlice() []float64 {
 func (v *Vector3d) Square() float64 {
 	return v.X*v.X + v.Y*v.Y + v.Z*v.Z
 }
+
+func (v *Vector3d) ToHomoVector() *HomoVector {
+	return NewHomoVector(v.X, v.Y, v.Z, 1)
+}
