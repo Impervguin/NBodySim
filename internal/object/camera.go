@@ -44,18 +44,20 @@ func (c *Camera) Accept(visitor ObjectVisitor) {
 	visitor.VisitCamera(c)
 }
 
-func (c *Camera) Transform(action *transform.TransformAction) {
+func (c *Camera) Transform(action transform.TransformAction) {
 	toPosition := transform.NewMoveAction(&c.position)
+	action.ApplyToVector(&c.position)
 	fromPosition := transform.NewMoveAction(vectormath.MultiplyVectorScalar(&c.position, -1))
-	(*action).ApplyToVector(&c.position)
 
 	(*toPosition).ApplyToVector(&c.forward)
-	(*action).ApplyToVector(&c.forward)
+	action.ApplyToVector(&c.forward)
 	(*fromPosition).ApplyToVector(&c.forward)
+	c.forward.Normalize()
 
 	(*toPosition).ApplyToVector(&c.up)
-	(*action).ApplyToVector(&c.up)
+	action.ApplyToVector(&c.up)
 	(*fromPosition).ApplyToVector(&c.up)
+	c.up.Normalize()
 }
 
 func (c *Camera) GetViewMatrix() *vectormath.Matrix4d {
@@ -73,4 +75,8 @@ func (c *Camera) GetViewMatrix() *vectormath.Matrix4d {
 	toCameraCenter.Modify(viewMatrix)
 
 	return toCameraCenter.GetMatrix()
+}
+
+func (c *Camera) GetPerspectiveXYModifier() float64 {
+	return c.d
 }

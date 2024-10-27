@@ -3,7 +3,7 @@ package transform
 import "NBodySim/internal/vectormath"
 
 type MoveAction struct {
-	baseMatrixTransform
+	BaseMatrixTransform
 }
 
 func NewMoveAction(translation *vectormath.Vector3d) *MoveAction {
@@ -18,5 +18,6 @@ func NewMoveAction(translation *vectormath.Vector3d) *MoveAction {
 
 	base.matrix = *base.matrix.Multiply(moveMatrix)
 
-	return &MoveAction{baseMatrixTransform: *base}
+	return &MoveAction{BaseMatrixTransform: *base}
 }
+

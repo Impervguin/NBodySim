@@ -27,6 +27,7 @@
 *.out
 *.app
 *.sum
+go.sum
 
 # obsidian
 *.obsidian/*

@@ -6,7 +6,7 @@ import (
 )
 
 type RotateAction struct {
-	baseMatrixTransform
+	BaseMatrixTransform
 }
 
 func NewRotateAction(ov *vectormath.Vector3d) *RotateAction {
@@ -34,17 +34,17 @@ func NewRotateAction(ov *vectormath.Vector3d) *RotateAction {
 
 	base.matrix = *base.matrix.Multiply(x).Multiply(y).Multiply(z)
 
-	return &RotateAction{baseMatrixTransform: *base}
+	return &RotateAction{BaseMatrixTransform: *base}
 }
 
 func NewRotateActionCenter(center *vectormath.Vector3d, rotate *vectormath.Vector3d) *RotateAction {
 	toCenter := NewMoveAction(vectormath.MultiplyVectorScalar(center, -1))
-	rotateAction := NewScaleAction(rotate)
+	rotateAction := NewRotateAction(rotate)
 	toOrigin := NewMoveAction(center)
 
 	base := NewBaseMatrixTransform()
 
 	base.matrix = *((toCenter.GetMatrix().Multiply(&rotateAction.matrix)).Multiply(toOrigin.GetMatrix()))
 
-	return &RotateAction{baseMatrixTransform: *base}
+	return &RotateAction{BaseMatrixTransform: *base}
 }

@@ -3,7 +3,7 @@ package transform
 import "NBodySim/internal/vectormath"
 
 type ScaleAction struct {
-	baseMatrixTransform
+	BaseMatrixTransform
 }
 
 func NewScaleAction(scale *vectormath.Vector3d) *ScaleAction {
@@ -18,7 +18,7 @@ func NewScaleAction(scale *vectormath.Vector3d) *ScaleAction {
 
 	base.matrix = *base.matrix.Multiply(scaleMatrix)
 
-	return &ScaleAction{baseMatrixTransform: *base}
+	return &ScaleAction{BaseMatrixTransform: *base}
 }
 
 func NewScaleActionCenter(center *vectormath.Vector3d, scale *vectormath.Vector3d) *ScaleAction {
@@ -30,5 +30,5 @@ func NewScaleActionCenter(center *vectormath.Vector3d, scale *vectormath.Vector3
 
 	base.matrix = *((toCenter.GetMatrix().Multiply(&scaleAction.matrix)).Multiply(toOrigin.GetMatrix()))
 
-	return &ScaleAction{baseMatrixTransform: *base}
+	return &ScaleAction{BaseMatrixTransform: *base}
 }
