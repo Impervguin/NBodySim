@@ -13,7 +13,7 @@ type ScreenBuffer struct {
 
 func newScreenBuffer(width, height int) *ScreenBuffer {
 	buf := make([][]color.Color, height)
-	for i := 0; i < width; i++ {
+	for i := 0; i < height; i++ {
 		buf[i] = make([]color.Color, width)
 	}
 	return &ScreenBuffer{
@@ -46,8 +46,8 @@ func (s *ScreenBuffer) PutPoint(x, y int, color color.Color) error {
 }
 
 func (s *ScreenBuffer) GetPoint(x, y int) color.Color {
-	if (x < 0 || x >= s.width) || (y < 0 || y >= s.height) {
-		return s.background
-	}
+	// if (x < 0 || x >= s.width) || (y < 0 || y >= s.height) {
+	// 	return s.background
+	// }
 	return s.buf[y][x]
 }

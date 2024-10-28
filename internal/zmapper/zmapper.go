@@ -3,7 +3,6 @@ package zmapper
 import (
 	"NBodySim/internal/mathutils"
 	"NBodySim/internal/object"
-	"fmt"
 	"image/color"
 )
 
@@ -89,10 +88,10 @@ func (zm *Zmapper) polygonGenerator(p *object.Polygon) <-chan zmapPoint {
 func (zm *Zmapper) processPolygon(p *object.Polygon) {
 	ch := zm.polygonGenerator(p)
 	for zmp := range ch {
-		ok, err := zm.dbuf.PutPoint(zmp.X, zmp.Y, zmp.Z)
-		if err != nil {
-			fmt.Println("leee, error writing to depth buffer:", err)
-		}
+		ok, _ := zm.dbuf.PutPoint(zmp.X, zmp.Y, zmp.Z)
+		// if err != nil {
+		// 	fmt.Println("leee, error writing to depth buffer:", err)
+		// }
 		if ok {
 			zm.sbuf.PutPoint(zmp.X, zmp.Y, zmp.Color)
 		}
