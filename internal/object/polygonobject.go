@@ -69,6 +69,7 @@ func (po *PolygonObject) Transform(action transform.TransformAction) {
 	for i := range po.vertices {
 		action.ApplyToVector(&po.vertices[i])
 	}
+	action.ApplyToVector(&po.center)
 }
 
 func (po *PolygonObject) Accept(visitor ObjectVisitor) {

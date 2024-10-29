@@ -8,12 +8,12 @@ import (
 )
 
 type Simulation struct {
-	objects object.ObjectPool
-	nbody   nbody.NBody
-	sim     nbody.NBodySim
-	bodyObj map[int64]int64
-	camera  *object.Camera
-	lights  []*object.Object
+	objects    object.ObjectPool
+	nbody      nbody.NBody
+	camera     *object.Camera
+	lights     []*object.Object
+	dt         float64
+	timeMoment float64
 }
 
 func NewSimulation() *Simulation {
@@ -23,10 +23,10 @@ func NewSimulation() *Simulation {
 }
 
 func (s *Simulation) init() {
-	s.nbody = *nbody.NewNBody(make([]*nbody.Body, 0))
-	s.sim = *nbody.NewNBodySim(&s.nbody, nbody.NewEulerSolver(&s.nbody), nbody.NewIterativeNbodyEngine(), 0.01)
+	s.nbody = *nbody.NewNBody(nbody.NewEulerSolver(), nbody.NewIterativeNbodyEngine())
+	s.dt = 0.01
+	s.timeMoment = 0
 	s.objects = *object.NewObjectPool()
-	s.bodyObj = make(map[int64]int64)
 	s.camera = object.NewCamera(*vectormath.NewVector3d(0, 0, 0), *vectormath.NewVector3d(0, 0, 1), *vectormath.NewVector3d(0, 1, 0), 1, 1, 1)
 }
 
@@ -43,15 +43,28 @@ func (s *Simulation) GetCamera() *object.Camera {
 }
 
 func (s *Simulation) SetSolver(solver nbody.NBodySolver) {
-	s.sim.SetSolver(solver)
+	s.nbody.SetSolver(solver)
 }
 
 func (s *Simulation) SetEngine(engine nbody.NBodyEngine) {
-	s.sim.SetEngine(engine)
+	s.nbody.SetEngine(engine)
 }
 
 func (s *Simulation) SetDt(dt float64) {
-	s.sim.SetDt(dt)
+	s.dt = dt
+}
+
+func (s *Simulation) Update() {
+	s.timeMoment += s.dt
+	s.nbody.SolveStep(s.dt)
+	body, _ := s.nbody.GetBody(2)
+	fmt.Println("Id:", 2, body.GetPosition())
+}
+
+func (s *Simulation) UpdateFor(t float64) {
+	times := int(t / s.dt)
+	s.timeMoment += float64(times) * s.dt
+	s.nbody.SolveSteps(times, s.dt)
 }
 
 func (s *Simulation) Accept(visitor SimulationVisitor) {
@@ -61,22 +74,19 @@ func (s *Simulation) GetObjectsClone() *object.ObjectPool {
 	return s.objects.Clone()
 }
 
-func (s *Simulation) AddObject(obj *SimulationObject) error {
-	if obj.body == nil {
-		return fmt.Errorf("body not set for object")
+func (s *Simulation) AddObject(obj object.Object, velocity vectormath.Vector3d, mass float64) error {
+	phys := NewPhysicalBody(obj, velocity, mass)
+	if _, ok := s.objects.GetObject(obj.GetId()); ok {
+		return fmt.Errorf("object with id %d already exists", obj.GetId())
 	}
-	if _, ok := s.bodyObj[obj.body.Id]; ok {
-		return fmt.Errorf("body with id %d already exists", obj.body.Id)
+	if _, ok := s.nbody.GetBody(obj.GetId()); ok {
+		return fmt.Errorf("body with id %d already exists", obj.GetId())
 	}
-	if _, ok := s.objects.GetObject(obj.obj.GetId()); ok {
-		return fmt.Errorf("object with id %d already exists", obj.obj.GetId())
-	}
-	_, err := s.nbody.AddBody(obj.body)
+	err := s.nbody.AddBody(phys)
 	if err != nil {
-		return err
+		return nil
 	}
+	s.objects.PutObject(obj)
 
-	s.objects.PutObject(obj.obj)
-	s.bodyObj[obj.body.Id] = obj.obj.GetId()
 	return nil
 }

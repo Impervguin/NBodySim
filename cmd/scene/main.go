@@ -3,7 +3,6 @@ package main
 import (
 	"NBodySim/internal/builder"
 	"NBodySim/internal/conveyer"
-	"NBodySim/internal/nbody"
 	"NBodySim/internal/object"
 	"NBodySim/internal/reader"
 	"NBodySim/internal/simulation"
@@ -21,7 +20,7 @@ import (
 
 func main() {
 
-	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/20_icosahedron.obj")
 	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube, err := dir.Construct()
 	if err != nil {
@@ -34,10 +33,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube2.Transform(transform.NewMoveAction(vectormath.NewVector3d(-5, 0, 0)))
+	cube2.Transform(transform.NewMoveAction(vectormath.NewVector3d(-50, 0, 0)))
+
+	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/8_octahedron.obj")
+	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
+	cube3, err := dir.Construct()
+	if err != nil {
+		panic(err)
+	}
+	cube3.Transform(transform.NewMoveAction(vectormath.NewVector3d(0, 40, -30)))
 
 	cam := object.NewCamera(
-		*vectormath.NewVector3d(0, 0, -10),
+		*vectormath.NewVector3d(0, 0, -100),
 		*vectormath.NewVector3d(0, 0, 1),
 		*vectormath.NewVector3d(0, 1, 0),
 		1, 1, 1,
@@ -45,10 +52,10 @@ func main() {
 
 	sim := simulation.NewSimulation()
 	sim.SetCamera(cam)
-	body1 := nbody.NewBody(vectormath.NewVector3d(0, 0, 0), vectormath.NewVector3d(0, 0, 0), 1)
-	body2 := nbody.NewBody(vectormath.NewVector3d(-5, 0, 0), vectormath.NewVector3d(0, 0, 0), 1)
-	sim.AddObject(simulation.NewSimulationObject(cube, body1))
-	sim.AddObject(simulation.NewSimulationObject(cube2, body2))
+	sim.AddObject(cube, *vectormath.NewVector3d(0, 0, 0), 10000000000)
+	sim.AddObject(cube2, *vectormath.NewVector3d(0, 0, 0), 10000000000)
+	sim.AddObject(cube3, *vectormath.NewVector3d(0, 0, 0), 10000000000)
+	sim.SetDt(0.0001)
 
 	myApp := app.New()
 	myWindow := myApp.NewWindow("3dSim")
@@ -60,7 +67,7 @@ func main() {
 	go func() {
 		time.Sleep(time.Second)
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
-
+		cam.Transform(transform.NewRotateAction(vectormath.NewVector3d(math.Pi/4, -math.Pi/4, 0)))
 		conv := conveyer.NewSimulationConveyer(
 			zmapper.NewSimpleZmapperFabric(),
 			int(width),
@@ -73,7 +80,8 @@ func main() {
 		myWindow.SetContent(nraster)
 		for {
 			time.Sleep(time.Millisecond * 34)
-			cam.Transform(transform.NewRotateAction(vectormath.NewVector3d(math.Pi/30, math.Pi/30, 0)))
+			sim.UpdateFor(1)
+			cam.Transform(transform.NewRotateAction(vectormath.NewVector3d(0, math.Pi/60, 0)))
 			conv.Convey()
 			myWindow.Content().Refresh()
 		}

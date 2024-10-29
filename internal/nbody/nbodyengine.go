@@ -1,9 +1,7 @@
 package nbody
 
-type calculateBody func(body *Body, dt float64) (*Body, error)
-
 type NBodyEngine interface {
-	Calculate(nbody *NBody, fn calculateBody, dt float64) (*NBody, error)
+	Calculate(bodies []PhysBody, solver NBodySolver, dt float64) error
 }
 
 type IterativeNbodyEngine struct{}
@@ -12,14 +10,12 @@ func NewIterativeNbodyEngine() *IterativeNbodyEngine {
 	return &IterativeNbodyEngine{}
 }
 
-func (e *IterativeNbodyEngine) Calculate(nbody *NBody, fn calculateBody, dt float64) (*NBody, error) {
-	uNBody := NewNBody(make([]*Body, 0, len(nbody.bodies)))
-	for _, body := range nbody.bodies {
-		ubody, err := fn(body, dt)
+func (e *IterativeNbodyEngine) Calculate(bodies []PhysBody, solver NBodySolver, dt float64) error {
+	for i, _ := range bodies {
+		_, err := solver.CalculateBody(&bodies[i], dt)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		uNBody.AddBody(ubody)
 	}
-	return uNBody, nil
+	return nil
 }
