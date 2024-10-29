@@ -34,13 +34,14 @@ func main() {
 	)
 	myApp := app.New()
 	myWindow := myApp.NewWindow("3dSim")
-	myWindow.Resize(fyne.NewSize(1000, 1000))
+	width, height := 800., 800.
+	myWindow.Resize(fyne.NewSize(float32(width), float32(height)))
 
 	myWindow.SetFixedSize(true)
 
 	go func() {
 		time.Sleep(time.Second)
-		width, height := float64(1000)*float64(myWindow.Canvas().Scale()), float64(1000)*float64(myWindow.Canvas().Scale())
+		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
 		fmt.Println(width, height)
 		var nview *object.CameraViewAction
 		var cccube *object.PolygonObject

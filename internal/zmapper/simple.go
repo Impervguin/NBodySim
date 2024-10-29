@@ -3,19 +3,28 @@ package zmapper
 import (
 	"NBodySim/internal/mathutils"
 	"NBodySim/internal/object"
+	"image"
 	"image/color"
 )
 
-type ScreenFunction func(x, y, w, h int) color.Color
-
-type Zmapper struct {
+type SimpleZmapper struct {
 	dbuf          DepthBuffer
 	sbuf          ScreenBuffer
 	width, height int
 }
 
-func NewZmapper(width, height int, background color.Color, df DepthBufferFabric) *Zmapper {
-	return &Zmapper{
+type SimpleZmapperFabric struct{}
+
+func NewSimpleZmapperFabric() *SimpleZmapperFabric {
+	return &SimpleZmapperFabric{}
+}
+
+func (f *SimpleZmapperFabric) CreateZmapper(width, height int, background color.Color) Zmapper {
+	return newSimpleZmapper(width, height, background, &DepthBufferInfFabric{})
+}
+
+func newSimpleZmapper(width, height int, background color.Color, df DepthBufferFabric) *SimpleZmapper {
+	return &SimpleZmapper{
 		width:  width,
 		height: height,
 		sbuf:   *NewScreenBuffer(width, height, background),
@@ -29,7 +38,7 @@ type zmapPoint struct {
 	Color color.Color
 }
 
-func (zm *Zmapper) polygonGenerator(p *object.Polygon) <-chan zmapPoint {
+func (zm *SimpleZmapper) polygonGenerator(p *object.Polygon) <-chan zmapPoint {
 	ch := make(chan zmapPoint)
 	go func() {
 
@@ -85,7 +94,7 @@ func (zm *Zmapper) polygonGenerator(p *object.Polygon) <-chan zmapPoint {
 	return ch
 }
 
-func (zm *Zmapper) processPolygon(p *object.Polygon) {
+func (zm *SimpleZmapper) processPolygon(p *object.Polygon) {
 	ch := zm.polygonGenerator(p)
 	for zmp := range ch {
 		ok, _ := zm.dbuf.PutPoint(zmp.X, zmp.Y, zmp.Z)
@@ -98,23 +107,35 @@ func (zm *Zmapper) processPolygon(p *object.Polygon) {
 	}
 }
 
-func (zm *Zmapper) VisitPolygonObject(po *object.PolygonObject) {
+func (zm *SimpleZmapper) VisitPolygonObject(po *object.PolygonObject) {
 	for _, p := range po.GetPolygons() {
 		zm.processPolygon(p)
 	}
 }
 
-func (zm *Zmapper) VisitCamera(cam *object.Camera) {
+func (zm *SimpleZmapper) VisitCamera(cam *object.Camera) {
 	// Nothing to do here
 }
 
-func (zm *Zmapper) GetScreenFunction() ScreenFunction {
+func (zm *SimpleZmapper) GetScreenFunction() ScreenFunction {
 	return func(x, y, w, h int) color.Color {
 		return zm.sbuf.GetPoint(x, y)
 	}
 }
 
-func (zm *Zmapper) Reset() {
+func (zm *SimpleZmapper) Reset() {
 	zm.sbuf.Reset()
 	zm.dbuf.Reset()
+}
+
+func (zm *SimpleZmapper) ColorModel() color.Model {
+	return color.RGBAModel
+}
+
+func (zm *SimpleZmapper) Bounds() image.Rectangle {
+	return image.Rect(0, 0, zm.width, zm.height)
+}
+
+func (zm *SimpleZmapper) At(x, y int) color.Color {
+	return zm.sbuf.GetPoint(x, y)
 }
