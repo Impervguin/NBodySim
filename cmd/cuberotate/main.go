@@ -19,7 +19,7 @@ import (
 
 func main() {
 
-	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/banana.obj")
 	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube, err := dir.Construct()
 	if err != nil {
@@ -27,7 +27,7 @@ func main() {
 	}
 
 	cam := object.NewCamera(
-		*vectormath.NewVector3d(0, 0, -20),
+		*vectormath.NewVector3d(0, 0, -400),
 		*vectormath.NewVector3d(0, 0, 1),
 		*vectormath.NewVector3d(0, 1, 0),
 		1, 1, 1,
