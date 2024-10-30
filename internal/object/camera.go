@@ -80,3 +80,15 @@ func (c *Camera) GetViewMatrix() *vectormath.Matrix4d {
 func (c *Camera) GetPerspectiveXYModifier() float64 {
 	return c.d
 }
+
+func (c *Camera) GetWidth() float64 {
+	return c.px
+}
+
+func (c *Camera) GetHeight() float64 {
+	return c.py
+}
+
+func (c *Camera) GetDistance() float64 {
+	return c.d
+}

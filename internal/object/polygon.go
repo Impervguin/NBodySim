@@ -23,6 +23,10 @@ func (p *Polygon) GetVertices() (*vectormath.Vector3d, *vectormath.Vector3d, *ve
 	return p.v1, p.v2, p.v3
 }
 
+func (p *Polygon) SetVertices(v1, v2, v3 *vectormath.Vector3d) {
+	p.v1, p.v2, p.v3 = v1, v2, v3
+}
+
 func (p *Polygon) GetColor() color.Color {
 	return p.color
 }

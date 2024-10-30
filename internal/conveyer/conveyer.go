@@ -1,6 +1,7 @@
 package conveyer
 
 import (
+	"NBodySim/internal/cutter"
 	"NBodySim/internal/object"
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
@@ -39,12 +40,23 @@ func (sc *SimulationConveyer) Convey() error {
 	canvas := transform.NewViewportToCanvas(float64(sc.zmapper.Bounds().Dx()), float64(sc.zmapper.Bounds().Dy()))
 	persp := object.NewPerspectiveTransform(cam)
 
-	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
-	move := transform.NewMoveAction(vectormath.NewVector3d(float64(sc.swidth)/2, float64(sc.sheight)/2, 0))
 	objs.Transform(view)
+
+	cut := cutter.NewSimpleCamCutter(cam)
+	objs.Accept(cut)
+
 	objs.Transform(canvas)
 	objs.Transform(persp)
+
+	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
+	move := transform.NewMoveAction(vectormath.NewVector3d(float64(sc.swidth)/2, float64(sc.sheight)/2, 0))
 	objs.Transform(move)
+
+	// obj, _ := objs.GetObject(1)
+	// obj.(*object.PolygonObject).PrintPolygons()
+
+	// obj, _ := objs.GetObject(1)
+	// obj.(*object.PolygonObject).PrintPolygons()
 
 	objs.Accept(sc.zmapper)
 

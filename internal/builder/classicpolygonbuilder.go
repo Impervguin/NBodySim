@@ -15,8 +15,8 @@ type ClassicPolygonBuilder struct {
 	reader    reader.PolygonObjectReader
 	readerObj *reader.PolygonObject
 	center    *vectormath.Vector3d
-	polygons  []object.Polygon
-	vertices  []vectormath.Vector3d
+	polygons  []*object.Polygon
+	vertices  []*vectormath.Vector3d
 }
 
 type ClassicPolygonFactory struct{}
@@ -36,9 +36,9 @@ func (b *ClassicPolygonBuilder) buildVertices() error {
 		return err
 	}
 	b.readerObj = obj
-	b.vertices = make([]vectormath.Vector3d, 0, len(obj.Vertexes))
+	b.vertices = make([]*vectormath.Vector3d, 0, len(obj.Vertexes))
 	for _, vertex := range obj.Vertexes {
-		b.vertices = append(b.vertices, *vectormath.NewVector3d(vertex.X, vertex.Y, vertex.Z))
+		b.vertices = append(b.vertices, vectormath.NewVector3d(vertex.X, vertex.Y, vertex.Z))
 	}
 	return nil
 }
@@ -47,7 +47,7 @@ func (b *ClassicPolygonBuilder) buildPolygon() error {
 	if b.readerObj == nil {
 		return fmt.Errorf("vertices not built yet")
 	}
-	polygons := make([]object.Polygon, 0, len(b.readerObj.Polygons))
+	polygons := make([]*object.Polygon, 0, len(b.readerObj.Polygons))
 	for _, polygon := range b.readerObj.Polygons {
 		if len(polygon.Vertexes) > 3 {
 			start := polygon.Vertexes[0]
@@ -55,22 +55,22 @@ func (b *ClassicPolygonBuilder) buildPolygon() error {
 			// color := color.RGBA{R: 255, B: 0, G: 0, A: 255}
 			for i := range polygon.Vertexes[1 : len(polygon.Vertexes)-1] {
 				opolygon := object.NewPolygon(
-					&b.vertices[polygon.Vertexes[start]],
-					&b.vertices[polygon.Vertexes[i]],
-					&b.vertices[polygon.Vertexes[i+1]],
+					b.vertices[polygon.Vertexes[start]],
+					b.vertices[polygon.Vertexes[i]],
+					b.vertices[polygon.Vertexes[i+1]],
 					color,
 				)
-				polygons = append(polygons, *opolygon)
+				polygons = append(polygons, opolygon)
 			}
 		} else if len(polygon.Vertexes) == 3 {
 			opolygon := object.NewPolygon(
-				&b.vertices[polygon.Vertexes[0]],
-				&b.vertices[polygon.Vertexes[1]],
-				&b.vertices[polygon.Vertexes[2]],
+				b.vertices[polygon.Vertexes[0]],
+				b.vertices[polygon.Vertexes[1]],
+				b.vertices[polygon.Vertexes[2]],
 				color.RGBA{R: uint8(rand.Intn(256)), G: uint8(rand.Intn(256)), B: uint8(rand.Intn(256)), A: 255},
 				// color.RGBA{R: 255, B: 0, G: 0, A: 255},
 			)
-			polygons = append(polygons, *opolygon)
+			polygons = append(polygons, opolygon)
 		} else {
 			return fmt.Errorf("invalid polygon with %d vertices", len(polygon.Vertexes))
 		}

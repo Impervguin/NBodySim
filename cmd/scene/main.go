@@ -55,7 +55,7 @@ func main() {
 	sim.AddObject(cube, *vectormath.NewVector3d(0, 0, 0), 10000000000)
 	sim.AddObject(cube2, *vectormath.NewVector3d(0, 0, 0), 10000000000)
 	sim.AddObject(cube3, *vectormath.NewVector3d(0, 0, 0), 10000000000)
-	sim.SetDt(0.0001)
+	sim.SetDt(0.00001)
 
 	myApp := app.New()
 	myWindow := myApp.NewWindow("3dSim")
@@ -72,7 +72,7 @@ func main() {
 			zmapper.NewSimpleZmapperFabric(),
 			int(width),
 			int(height),
-			color.Black,
+			color.White,
 			sim,
 		)
 		var nraster *canvas.Raster = canvas.NewRasterFromImage(conv.GetImage())
