@@ -1,18 +1,18 @@
 package object
 
 import (
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/vectormath"
 )
 
 type TransformAction interface {
-	ApplyToVector(vector *vectormath.Vector3d)
-	ApplyToHomoVector(homoPoint *vectormath.HomoVector)
+	ApplyToVector(vector *vector.Vector3d)
+	ApplyToHomoVector(homoPoint *vector.HomoVector)
 }
 
 type Object interface {
 	GetId() int64
-	GetCenter() vectormath.Vector3d
+	GetCenter() vector.Vector3d
 	Clone() Object
 	Transform(action transform.TransformAction)
 	IsVisible() bool

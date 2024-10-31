@@ -2,10 +2,10 @@ package main
 
 import (
 	"NBodySim/internal/builder"
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/reader"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/vectormath"
 	"NBodySim/internal/zmapper"
 	"fmt"
 	"image/color"
@@ -27,9 +27,9 @@ func main() {
 	}
 
 	cam := object.NewCamera(
-		*vectormath.NewVector3d(0, 0, -400),
-		*vectormath.NewVector3d(0, 0, 1),
-		*vectormath.NewVector3d(0, 1, 0),
+		*vector.NewVector3d(0, 0, -400),
+		*vector.NewVector3d(0, 0, 1),
+		*vector.NewVector3d(0, 1, 0),
 		1, 1, 1,
 	)
 	myApp := app.New()
@@ -50,15 +50,15 @@ func main() {
 		myWindow.SetContent(nraster)
 		for {
 			time.Sleep(time.Millisecond * 50)
-			cam.Transform(transform.NewRotateAction(vectormath.NewVector3d(-math.Pi/12, -math.Pi/12, 0)))
+			cam.Transform(transform.NewRotateAction(vector.NewVector3d(-math.Pi/12, -math.Pi/12, 0)))
 			nview = object.NewCameraViewAction(cam)
 			cccube, _ = (cube.Clone()).(*object.PolygonObject)
 			cccube.Transform(nview)
 			cccube.Transform(transform.NewViewportToCanvas(float64(width), float64(height)))
 			cccube.Transform(object.NewPerspectiveTransform(cam))
 
-			// cccube.Transform(transform.NewScaleAction(vectormath.NewVector3d(float64(myWindow.Canvas().Scale()), float64(myWindow.Canvas().Scale()), 1)))
-			cccube.Transform(transform.NewMoveAction(vectormath.NewVector3d(float64(width)/2, float64(height)/2, 0)))
+			// cccube.Transform(transform.NewScaleAction(vector.NewVector3d(float64(myWindow.Canvas().Scale()), float64(myWindow.Canvas().Scale()), 1)))
+			cccube.Transform(transform.NewMoveAction(vector.NewVector3d(float64(width)/2, float64(height)/2, 0)))
 
 			nzmap.Reset()
 			cccube.Accept(nzmap)

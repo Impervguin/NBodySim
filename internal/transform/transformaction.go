@@ -1,12 +1,10 @@
 package transform
 
 import (
-	"NBodySim/internal/vectormath"
+	"NBodySim/internal/mathutils/vector"
 )
 
 type TransformAction interface {
-	ApplyToVector(vector *vectormath.Vector3d) 
-	ApplyToHomoVector(homoPoint *vectormath.HomoVector)
+	ApplyToVector(vector *vector.Vector3d)
+	ApplyToHomoVector(homoPoint *vector.HomoVector)
 }
-
-

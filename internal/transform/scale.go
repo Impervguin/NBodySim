@@ -1,15 +1,15 @@
 package transform
 
-import "NBodySim/internal/vectormath"
+import "NBodySim/internal/mathutils/vector"
 
 type ScaleAction struct {
 	BaseMatrixTransform
 }
 
-func NewScaleAction(scale *vectormath.Vector3d) *ScaleAction {
+func NewScaleAction(scale *vector.Vector3d) *ScaleAction {
 	base := NewBaseMatrixTransform()
 
-	scaleMatrix := vectormath.NewMatrix4d(
+	scaleMatrix := vector.NewMatrix4d(
 		scale.X, 0, 0, 0,
 		0, scale.Y, 0, 0,
 		0, 0, scale.Z, 0,
@@ -21,8 +21,8 @@ func NewScaleAction(scale *vectormath.Vector3d) *ScaleAction {
 	return &ScaleAction{BaseMatrixTransform: *base}
 }
 
-func NewScaleActionCenter(center *vectormath.Vector3d, scale *vectormath.Vector3d) *ScaleAction {
-	toCenter := NewMoveAction(vectormath.MultiplyVectorScalar(center, -1))
+func NewScaleActionCenter(center *vector.Vector3d, scale *vector.Vector3d) *ScaleAction {
+	toCenter := NewMoveAction(vector.MultiplyVectorScalar(center, -1))
 	scaleAction := NewScaleAction(scale)
 	toOrigin := NewMoveAction(center)
 

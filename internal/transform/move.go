@@ -1,15 +1,15 @@
 package transform
 
-import "NBodySim/internal/vectormath"
+import "NBodySim/internal/mathutils/vector"
 
 type MoveAction struct {
 	BaseMatrixTransform
 }
 
-func NewMoveAction(translation *vectormath.Vector3d) *MoveAction {
+func NewMoveAction(translation *vector.Vector3d) *MoveAction {
 	base := NewBaseMatrixTransform()
 
-	moveMatrix := vectormath.NewMatrix4d(
+	moveMatrix := vector.NewMatrix4d(
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
@@ -20,4 +20,3 @@ func NewMoveAction(translation *vectormath.Vector3d) *MoveAction {
 
 	return &MoveAction{BaseMatrixTransform: *base}
 }
-

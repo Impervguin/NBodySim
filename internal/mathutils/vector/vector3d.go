@@ -1,4 +1,4 @@
-package vectormath
+package vector
 
 import (
 	"fmt"

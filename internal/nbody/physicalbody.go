@@ -1,15 +1,15 @@
 package nbody
 
-import "NBodySim/internal/vectormath"
+import "NBodySim/internal/mathutils/vector"
 
 type PhysBody struct {
 	Id       int64
-	Position vectormath.Vector3d
-	Velocity vectormath.Vector3d
+	Position vector.Vector3d
+	Velocity vector.Vector3d
 	Mass     float64
 }
 
-func NewPhysBody(id int64, position, velocity vectormath.Vector3d, mass float64) *PhysBody {
+func NewPhysBody(id int64, position, velocity vector.Vector3d, mass float64) *PhysBody {
 	return &PhysBody{
 		Id:       id,
 		Position: position,
@@ -30,11 +30,11 @@ func (pb *PhysBody) Clone() *PhysBody {
 	return NewPhysBody(pb.Id, pb.Position, pb.Velocity, pb.Mass)
 }
 
-func (pb *PhysBody) GetPosition() vectormath.Vector3d {
+func (pb *PhysBody) GetPosition() vector.Vector3d {
 	return pb.Position
 }
 
-func (pb *PhysBody) GetVelocity() vectormath.Vector3d {
+func (pb *PhysBody) GetVelocity() vector.Vector3d {
 	return pb.Velocity
 }
 
@@ -48,11 +48,11 @@ func (pb *PhysBody) Update(other Body) {
 	pb.Mass = other.GetMass()
 }
 
-func (pb *PhysBody) SetPosition(position vectormath.Vector3d) {
+func (pb *PhysBody) SetPosition(position vector.Vector3d) {
 	pb.Position = position
 }
 
-func (pb *PhysBody) SetVelocity(velocity vectormath.Vector3d) {
+func (pb *PhysBody) SetVelocity(velocity vector.Vector3d) {
 	pb.Velocity = velocity
 }
 

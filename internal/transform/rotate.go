@@ -1,7 +1,7 @@
 package transform
 
 import (
-	"NBodySim/internal/vectormath"
+	"NBodySim/internal/mathutils/vector"
 	"math"
 )
 
@@ -9,23 +9,23 @@ type RotateAction struct {
 	BaseMatrixTransform
 }
 
-func NewRotateAction(ov *vectormath.Vector3d) *RotateAction {
+func NewRotateAction(ov *vector.Vector3d) *RotateAction {
 	base := NewBaseMatrixTransform()
 
-	x := vectormath.NewMatrix4d(
+	x := vector.NewMatrix4d(
 		1, 0, 0, 0,
 		0, math.Cos(ov.X), math.Sin(ov.X), 0,
 		0, -math.Sin(ov.X), math.Cos(ov.X), 0,
 		0, 0, 0, 1,
 	)
 
-	y := vectormath.NewMatrix4d(
+	y := vector.NewMatrix4d(
 		math.Cos(ov.Y), 0, -math.Sin(ov.Y), 0,
 		0, 1, 0, 0,
 		math.Sin(ov.Y), 0, math.Cos(ov.Y), 0,
 		0, 0, 0, 1,
 	)
-	z := vectormath.NewMatrix4d(
+	z := vector.NewMatrix4d(
 		math.Cos(ov.Z), math.Sin(ov.Z), 0, 0,
 		-math.Sin(ov.Z), math.Cos(ov.Z), 0, 0,
 		0, 0, 1, 0,
@@ -37,8 +37,8 @@ func NewRotateAction(ov *vectormath.Vector3d) *RotateAction {
 	return &RotateAction{BaseMatrixTransform: *base}
 }
 
-func NewRotateActionCenter(center *vectormath.Vector3d, rotate *vectormath.Vector3d) *RotateAction {
-	toCenter := NewMoveAction(vectormath.MultiplyVectorScalar(center, -1))
+func NewRotateActionCenter(center *vector.Vector3d, rotate *vector.Vector3d) *RotateAction {
+	toCenter := NewMoveAction(vector.MultiplyVectorScalar(center, -1))
 	rotateAction := NewRotateAction(rotate)
 	toOrigin := NewMoveAction(center)
 

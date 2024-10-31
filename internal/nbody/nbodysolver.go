@@ -1,7 +1,7 @@
 package nbody
 
 import (
-	"NBodySim/internal/vectormath"
+	"NBodySim/internal/mathutils/vector"
 )
 
 const (
@@ -18,10 +18,10 @@ type EulerSolver struct {
 	past []PhysBody
 }
 
-func Body2Force(target *PhysBody, influencer *PhysBody) *vectormath.Vector3d {
-	distance := vectormath.SubtractVectors(&influencer.Position, &target.Position)
+func Body2Force(target *PhysBody, influencer *PhysBody) *vector.Vector3d {
+	distance := vector.SubtractVectors(&influencer.Position, &target.Position)
 	distanceSquared := distance.Square()
-	force := vectormath.NormalizeVector(distance)
+	force := vector.NormalizeVector(distance)
 	force.MultiplyScalar(G * influencer.Mass * target.Mass / distanceSquared)
 	return force
 }
@@ -31,14 +31,14 @@ func NewEulerSolver() *EulerSolver {
 }
 
 func (es *EulerSolver) CalculateBody(body *PhysBody, dt float64) (*PhysBody, error) {
-	body.Position.Add(vectormath.MultiplyVectorScalar(&body.Velocity, dt))
-	force := vectormath.NewVector3d(0, 0, 0)
+	body.Position.Add(vector.MultiplyVectorScalar(&body.Velocity, dt))
+	force := vector.NewVector3d(0, 0, 0)
 	for _, influencer := range es.past {
 		if influencer.Id != body.Id {
 			force.Add(Body2Force(body, &influencer))
 		}
 	}
-	body.Velocity.Add(vectormath.MultiplyVectorScalar(force, dt/body.Mass))
+	body.Velocity.Add(vector.MultiplyVectorScalar(force, dt/body.Mass))
 	return body, nil
 }
 

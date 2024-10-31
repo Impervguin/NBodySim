@@ -1,23 +1,23 @@
 package object
 
 import (
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/vectormath"
 )
 
 type Camera struct {
 	ObjectWithId
 	InvisibleObject
-	position vectormath.Vector3d
-	forward  vectormath.Vector3d
-	right    vectormath.Vector3d
-	up       vectormath.Vector3d
+	position vector.Vector3d
+	forward  vector.Vector3d
+	right    vector.Vector3d
+	up       vector.Vector3d
 	px       float64 // Размер окна просмотра по x(в пространстве камеры)
 	py       float64 // Размер окна просмотра по y(в пространстве камеры)
 	d        float64 // Дальность от позиции камеры, до окна просмотра
 }
 
-func NewCamera(position, forward, up vectormath.Vector3d, px, py, d float64) *Camera {
+func NewCamera(position, forward, up vector.Vector3d, px, py, d float64) *Camera {
 	forward.Normalize()
 	up.Normalize()
 	cam := &Camera{
@@ -32,7 +32,7 @@ func NewCamera(position, forward, up vectormath.Vector3d, px, py, d float64) *Ca
 	return cam
 }
 
-func (c *Camera) GetCenter() vectormath.Vector3d {
+func (c *Camera) GetCenter() vector.Vector3d {
 	return c.position
 }
 
@@ -47,7 +47,7 @@ func (c *Camera) Accept(visitor ObjectVisitor) {
 func (c *Camera) Transform(action transform.TransformAction) {
 	toPosition := transform.NewMoveAction(&c.position)
 	action.ApplyToVector(&c.position)
-	fromPosition := transform.NewMoveAction(vectormath.MultiplyVectorScalar(&c.position, -1))
+	fromPosition := transform.NewMoveAction(vector.MultiplyVectorScalar(&c.position, -1))
 
 	(*toPosition).ApplyToVector(&c.forward)
 	action.ApplyToVector(&c.forward)
@@ -60,18 +60,18 @@ func (c *Camera) Transform(action transform.TransformAction) {
 	c.up.Normalize()
 }
 
-func (c *Camera) GetViewMatrix() *vectormath.Matrix4d {
-	right := vectormath.CrossProduct(&c.forward, &c.up)
+func (c *Camera) GetViewMatrix() *vector.Matrix4d {
+	right := vector.CrossProduct(&c.forward, &c.up)
 	right.Normalize()
 
-	viewMatrix := vectormath.NewMatrix4d(
+	viewMatrix := vector.NewMatrix4d(
 		right.X, c.up.X, c.forward.X, 0,
 		right.Y, c.up.Y, c.forward.Y, 0,
 		right.Z, c.up.Z, c.forward.Z, 0,
 		0, 0, 0, 1,
 	)
 
-	toCameraCenter := transform.NewMoveAction(vectormath.MultiplyVectorScalar(&c.position, -1))
+	toCameraCenter := transform.NewMoveAction(vector.MultiplyVectorScalar(&c.position, -1))
 	toCameraCenter.Modify(viewMatrix)
 
 	return toCameraCenter.GetMatrix()

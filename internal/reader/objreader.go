@@ -1,7 +1,7 @@
 package reader
 
 import (
-	"NBodySim/internal/vectormath"
+	"NBodySim/internal/mathutils/vector"
 	"bufio"
 	"fmt"
 	"os"
@@ -23,7 +23,7 @@ func (or *ObjReader) ReadPolygonObject() (*PolygonObject, error) {
 		return nil, err
 	}
 	defer f.Close()
-	vertices := make([]vectormath.Vector3d, 0)
+	vertices := make([]vector.Vector3d, 0)
 	edges := make([]Edge, 0)
 	polygons := make([]Polygon, 0)
 
@@ -56,7 +56,7 @@ func (or *ObjReader) ReadPolygonObject() (*PolygonObject, error) {
 			if err != nil {
 				return nil, err
 			}
-			vertices = append(vertices, *vectormath.NewVector3d(x, y, z))
+			vertices = append(vertices, *vector.NewVector3d(x, y, z))
 		case "f":
 			if len(parts) < 4 {
 				return nil, fmt.Errorf("invalid face line: %s", str)

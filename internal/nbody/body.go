@@ -1,16 +1,16 @@
 package nbody
 
 import (
-	"NBodySim/internal/vectormath"
+	"NBodySim/internal/mathutils/vector"
 )
 
 type Body interface {
 	GetId() int64
 	Clone() Body
-	GetPosition() vectormath.Vector3d
-	GetVelocity() vectormath.Vector3d
+	GetPosition() vector.Vector3d
+	GetVelocity() vector.Vector3d
 	GetMass() float64
-	SetPosition(position vectormath.Vector3d)
-	SetVelocity(velocity vectormath.Vector3d)
+	SetPosition(position vector.Vector3d)
+	SetVelocity(velocity vector.Vector3d)
 	SetMass(mass float64)
 }

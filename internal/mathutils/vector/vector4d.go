@@ -1,4 +1,4 @@
-package vectormath
+package vector
 
 type HomoVector struct {
 	X, Y, Z, W float64

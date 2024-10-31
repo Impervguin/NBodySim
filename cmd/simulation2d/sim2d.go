@@ -4,9 +4,9 @@ import (
 	"image/color"
 	"time"
 
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/nbody"
 	"NBodySim/internal/simulation2d"
-	"NBodySim/internal/vectormath"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -30,23 +30,23 @@ func main() {
 	engine := nbody.NewIterativeNbodyEngine()
 	bodies := []*nbody.Body{
 		nbody.NewBody(
-			vectormath.NewVector3d(400, 300, 0),
-			vectormath.NewVector3d(0, 0, 0),
+			vector.NewVector3d(400, 300, 0),
+			vector.NewVector3d(0, 0, 0),
 			1e15,
 		),
 		nbody.NewBody(
-			vectormath.NewVector3d(500, 800, 0),
-			vectormath.NewVector3d(0, 0, 0),
+			vector.NewVector3d(500, 800, 0),
+			vector.NewVector3d(0, 0, 0),
 			2e15,
 		),
 		nbody.NewBody(
-			vectormath.NewVector3d(800, 500, 0),
-			vectormath.NewVector3d(0, 0, 0),
+			vector.NewVector3d(800, 500, 0),
+			vector.NewVector3d(0, 0, 0),
 			1e15,
 		),
 		nbody.NewBody(
-			vectormath.NewVector3d(300, 600, 0),
-			vectormath.NewVector3d(0, 0, 0),
+			vector.NewVector3d(300, 600, 0),
+			vector.NewVector3d(0, 0, 0),
 			1e15,
 		),
 	}

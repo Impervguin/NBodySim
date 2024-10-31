@@ -1,9 +1,9 @@
 package simulation
 
 import (
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/nbody"
 	"NBodySim/internal/object"
-	"NBodySim/internal/vectormath"
 	"fmt"
 )
 
@@ -27,7 +27,7 @@ func (s *Simulation) init() {
 	s.dt = 0.01
 	s.timeMoment = 0
 	s.objects = *object.NewObjectPool()
-	s.camera = object.NewCamera(*vectormath.NewVector3d(0, 0, 0), *vectormath.NewVector3d(0, 0, 1), *vectormath.NewVector3d(0, 1, 0), 1, 1, 1)
+	s.camera = object.NewCamera(*vector.NewVector3d(0, 0, 0), *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, 1, 0), 1, 1, 1)
 }
 
 func (s *Simulation) SetCamera(cam *object.Camera) error {
@@ -74,7 +74,7 @@ func (s *Simulation) GetObjectsClone() *object.ObjectPool {
 	return s.objects.Clone()
 }
 
-func (s *Simulation) AddObject(obj object.Object, velocity vectormath.Vector3d, mass float64) error {
+func (s *Simulation) AddObject(obj object.Object, velocity vector.Vector3d, mass float64) error {
 	phys := NewPhysicalBody(obj, velocity, mass)
 	if _, ok := s.objects.GetObject(obj.GetId()); ok {
 		return fmt.Errorf("object with id %d already exists", obj.GetId())

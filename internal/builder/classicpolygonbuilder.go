@@ -1,9 +1,9 @@
 package builder
 
 import (
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/reader"
-	"NBodySim/internal/vectormath"
 	"fmt"
 	"image/color"
 
@@ -14,9 +14,9 @@ type ClassicPolygonBuilder struct {
 	obj       object.PolygonObject
 	reader    reader.PolygonObjectReader
 	readerObj *reader.PolygonObject
-	center    *vectormath.Vector3d
+	center    *vector.Vector3d
 	polygons  []*object.Polygon
-	vertices  []*vectormath.Vector3d
+	vertices  []*vector.Vector3d
 }
 
 type ClassicPolygonFactory struct{}
@@ -36,9 +36,9 @@ func (b *ClassicPolygonBuilder) buildVertices() error {
 		return err
 	}
 	b.readerObj = obj
-	b.vertices = make([]*vectormath.Vector3d, 0, len(obj.Vertexes))
+	b.vertices = make([]*vector.Vector3d, 0, len(obj.Vertexes))
 	for _, vertex := range obj.Vertexes {
-		b.vertices = append(b.vertices, vectormath.NewVector3d(vertex.X, vertex.Y, vertex.Z))
+		b.vertices = append(b.vertices, vector.NewVector3d(vertex.X, vertex.Y, vertex.Z))
 	}
 	return nil
 }
@@ -80,7 +80,7 @@ func (b *ClassicPolygonBuilder) buildPolygon() error {
 }
 
 func (b *ClassicPolygonBuilder) buildCenter() error {
-	b.center = vectormath.NewVector3d(0, 0, 0)
+	b.center = vector.NewVector3d(0, 0, 0)
 	return nil
 }
 

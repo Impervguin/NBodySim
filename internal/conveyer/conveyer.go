@@ -2,10 +2,10 @@ package conveyer
 
 import (
 	"NBodySim/internal/cutter"
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/vectormath"
 	"NBodySim/internal/zmapper"
 	"image"
 	"image/color"
@@ -49,14 +49,8 @@ func (sc *SimulationConveyer) Convey() error {
 	objs.Transform(persp)
 
 	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
-	move := transform.NewMoveAction(vectormath.NewVector3d(float64(sc.swidth)/2, float64(sc.sheight)/2, 0))
+	move := transform.NewMoveAction(vector.NewVector3d(float64(sc.swidth)/2, float64(sc.sheight)/2, 0))
 	objs.Transform(move)
-
-	// obj, _ := objs.GetObject(1)
-	// obj.(*object.PolygonObject).PrintPolygons()
-
-	// obj, _ := objs.GetObject(1)
-	// obj.(*object.PolygonObject).PrintPolygons()
 
 	objs.Accept(sc.zmapper)
 

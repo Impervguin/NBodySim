@@ -1,4 +1,4 @@
-package vectormath
+package vector
 
 type Matrix4d struct {
 	Elements [4][4]float64
