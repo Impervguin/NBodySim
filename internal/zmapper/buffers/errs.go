@@ -1,4 +1,4 @@
-package zmapper
+package buffers
 
 type ZmapperError struct {
 	str string

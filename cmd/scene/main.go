@@ -8,7 +8,7 @@ import (
 	"NBodySim/internal/reader"
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/zmapper"
+	"NBodySim/internal/zmapper/mapper"
 	"image/color"
 	"math"
 	"time"
@@ -44,7 +44,7 @@ func main() {
 	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 40, -30)))
 
 	cam := object.NewCamera(
-		*vector.NewVector3d(0, 0, -100),
+		*vector.NewVector3d(0, 0, -10),
 		*vector.NewVector3d(0, 0, 1),
 		*vector.NewVector3d(0, 1, 0),
 		1, 1, 1,
@@ -69,7 +69,8 @@ func main() {
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
 		cam.Transform(transform.NewRotateAction(vector.NewVector3d(math.Pi/4, -math.Pi/4, 0)))
 		conv := conveyer.NewSimulationConveyer(
-			zmapper.NewSimpleZmapperFabric(),
+			// mapper.NewSimpleZmapperFabric(),
+			mapper.NewParallelPerPolygonZmapperFabric(),
 			int(width),
 			int(height),
 			color.White,
@@ -79,7 +80,7 @@ func main() {
 
 		myWindow.SetContent(nraster)
 		for {
-			time.Sleep(time.Millisecond * 34)
+			time.Sleep(time.Millisecond * 17)
 			sim.UpdateFor(1)
 			cam.Transform(transform.NewRotateAction(vector.NewVector3d(0, math.Pi/60, 0)))
 			conv.Convey()

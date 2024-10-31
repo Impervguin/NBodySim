@@ -1,15 +1,16 @@
-package zmapper
+package mapper
 
 import (
 	"NBodySim/internal/mathutils"
 	"NBodySim/internal/object"
+	"NBodySim/internal/zmapper/buffers"
 	"image"
 	"image/color"
 )
 
 type SimpleZmapper struct {
-	dbuf          DepthBuffer
-	sbuf          ScreenBuffer
+	dbuf          buffers.DepthBuffer
+	sbuf          buffers.ScreenBuffer
 	width, height int
 }
 
@@ -20,14 +21,14 @@ func NewSimpleZmapperFabric() *SimpleZmapperFabric {
 }
 
 func (f *SimpleZmapperFabric) CreateZmapper(width, height int, background color.Color) Zmapper {
-	return newSimpleZmapper(width, height, background, &DepthBufferInfFabric{})
+	return newSimpleZmapper(width, height, background, &buffers.DepthBufferInfFabric{})
 }
 
-func newSimpleZmapper(width, height int, background color.Color, df DepthBufferFabric) *SimpleZmapper {
+func newSimpleZmapper(width, height int, background color.Color, df buffers.DepthBufferFabric) *SimpleZmapper {
 	return &SimpleZmapper{
 		width:  width,
 		height: height,
-		sbuf:   *NewScreenBuffer(width, height, background),
+		sbuf:   *buffers.NewScreenBuffer(width, height, background),
 		dbuf:   df.CreateDepthBuffer(width, height),
 	}
 }
@@ -97,13 +98,14 @@ func (zm *SimpleZmapper) polygonGenerator(p *object.Polygon) <-chan zmapPoint {
 func (zm *SimpleZmapper) processPolygon(p *object.Polygon) {
 	ch := zm.polygonGenerator(p)
 	for zmp := range ch {
-		ok, _ := zm.dbuf.PutPoint(zmp.X, zmp.Y, zmp.Z)
-		// if err != nil {
-		// 	fmt.Println("leee, error writing to depth buffer:", err)
-		// }
-		if ok {
-			zm.sbuf.PutPoint(zmp.X, zmp.Y, zmp.Color)
-		}
+		zm.setPoint(zmp.X, zmp.Y, zmp.Z, zmp.Color)
+	}
+}
+
+func (zm *SimpleZmapper) setPoint(x, y int, z float64, color color.Color) {
+	ok, _ := zm.dbuf.PutPoint(x, y, z)
+	if ok {
+		zm.sbuf.PutPoint(x, y, color)
 	}
 }
 
@@ -117,7 +119,7 @@ func (zm *SimpleZmapper) VisitCamera(cam *object.Camera) {
 	// Nothing to do here
 }
 
-func (zm *SimpleZmapper) GetScreenFunction() ScreenFunction {
+func (zm *SimpleZmapper) GetScreenFunction() buffers.ScreenFunction {
 	return func(x, y, w, h int) color.Color {
 		return zm.sbuf.GetPoint(x, y)
 	}

@@ -6,19 +6,19 @@ import (
 	"NBodySim/internal/object"
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/zmapper"
+	"NBodySim/internal/zmapper/mapper"
 	"image"
 	"image/color"
 )
 
 type SimulationConveyer struct {
-	zmapper zmapper.Zmapper
+	zmapper mapper.Zmapper
 	swidth  int
 	sheight int
 	sim     *simulation.Simulation
 }
 
-func NewSimulationConveyer(fabric zmapper.ZmapperFabric, swidth, sheight int, background color.Color, sim *simulation.Simulation) *SimulationConveyer {
+func NewSimulationConveyer(fabric mapper.ZmapperFabric, swidth, sheight int, background color.Color, sim *simulation.Simulation) *SimulationConveyer {
 	return &SimulationConveyer{
 		zmapper: fabric.CreateZmapper(swidth, sheight, background),
 		swidth:  swidth,

@@ -1,4 +1,4 @@
-package zmapper
+package buffers
 
 import "image/color"
 

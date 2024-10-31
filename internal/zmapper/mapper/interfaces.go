@@ -1,7 +1,8 @@
-package zmapper
+package mapper
 
 import (
 	"NBodySim/internal/object"
+	"NBodySim/internal/zmapper/buffers"
 	"image"
 	"image/color"
 )
@@ -10,7 +11,7 @@ type Zmapper interface {
 	image.Image
 	VisitPolygonObject(po *object.PolygonObject)
 	VisitCamera(cam *object.Camera)
-	GetScreenFunction() ScreenFunction
+	GetScreenFunction() buffers.ScreenFunction
 	Reset()
 }
 
