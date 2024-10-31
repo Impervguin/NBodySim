@@ -10,6 +10,29 @@ import (
 	"math/rand"
 )
 
+func CheckConvexPolygon(vertices []*vector.Vector3d) bool {
+	n := len(vertices)
+	if n < 3 {
+		return false
+	}
+	last := vector.SubtractVectors(vertices[1], vertices[0])
+	t := vector.SubtractVectors(vertices[2], vertices[1])
+	normal := last.Cross(t)
+	last = t
+	for i := 1; i < n; i++ {
+		cur := vector.SubtractVectors(vertices[(i+1)%n], vertices[i])
+		curNormal := last.Cross(cur)
+		// fmt.Println(normal)
+		// fmt.Println(curNormal)
+		// fmt.Println(normal.Dot(curNormal))
+		if curNormal.Dot(normal) < 0 {
+			return false
+		}
+		last = cur
+	}
+	return true
+}
+
 type ClassicPolygonBuilder struct {
 	obj       object.PolygonObject
 	reader    reader.PolygonObjectReader
@@ -49,6 +72,15 @@ func (b *ClassicPolygonBuilder) buildPolygon() error {
 	}
 	polygons := make([]*object.Polygon, 0, len(b.readerObj.Polygons))
 	for _, polygon := range b.readerObj.Polygons {
+
+		pverts := make([]*vector.Vector3d, 0, len(polygon.Vertexes))
+		for _, index := range polygon.Vertexes {
+			pverts = append(pverts, b.vertices[index])
+		}
+		if !CheckConvexPolygon(pverts) {
+			return fmt.Errorf("non-convex polygon detected")
+		}
+
 		if len(polygon.Vertexes) > 3 {
 			start := polygon.Vertexes[0]
 			color := color.RGBA{R: uint8(rand.Intn(256)), G: uint8(rand.Intn(256)), B: uint8(rand.Intn(256)), A: 255}
