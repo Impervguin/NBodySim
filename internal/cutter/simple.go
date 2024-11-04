@@ -159,3 +159,7 @@ func (c *SimpleCamCutter) VisitPolygonObject(po *object.PolygonObject) {
 func (c *SimpleCamCutter) VisitCamera(cam *object.Camera) {
 	// Nothing to do here, just a placeholder
 }
+
+func (c *SimpleCamCutter) VisitPointLight(light *object.PointLight) {
+	// Nothing to do here, just a placeholder
+}

@@ -6,53 +6,55 @@ import (
 	"NBodySim/internal/object"
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/zmapper/mapper"
+	"NBodySim/internal/zmapper/objectdrawer"
 	"image"
-	"image/color"
 )
 
 type SimulationConveyer struct {
-	zmapper mapper.Zmapper
-	swidth  int
-	sheight int
-	sim     *simulation.Simulation
+	drawer objectdrawer.ObjectDrawer
+	sim    *simulation.Simulation
 }
 
-func NewSimulationConveyer(fabric mapper.ZmapperFabric, swidth, sheight int, background color.Color, sim *simulation.Simulation) *SimulationConveyer {
+func NewSimulationConveyer(fabric objectdrawer.ObjectDrawerFabric, sim *simulation.Simulation) *SimulationConveyer {
 	return &SimulationConveyer{
-		zmapper: fabric.CreateZmapper(swidth, sheight, background),
-		swidth:  swidth,
-		sheight: sheight,
-		sim:     sim,
+		drawer: fabric.CreateObjectDrawer(),
+		sim:    sim,
 	}
 }
 
 func (sc *SimulationConveyer) GetImage() image.Image {
-	return sc.zmapper
+	return sc.drawer.GetImage()
 }
 
 func (sc *SimulationConveyer) Convey() error {
-	sc.zmapper.Reset()
+	sc.drawer.ResetImage()
 	objs := sc.sim.GetObjectsClone()
 	cam := sc.sim.GetCamera()
 
 	view := object.NewCameraViewAction(cam)
-	canvas := transform.NewViewportToCanvas(float64(sc.zmapper.Bounds().Dx()), float64(sc.zmapper.Bounds().Dy()))
+	canvas := transform.NewViewportToCanvas(float64(sc.drawer.GetWidth()), float64(sc.drawer.GetHeight()))
 	persp := object.NewPerspectiveTransform(cam)
+
+	// light and shadows here
 
 	objs.Transform(view)
 
+	// shadow here
+
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
+
+	// light here
 
 	objs.Transform(canvas)
 	objs.Transform(persp)
 
 	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
-	move := transform.NewMoveAction(vector.NewVector3d(float64(sc.swidth)/2, float64(sc.sheight)/2, 0))
+	move := transform.NewMoveAction(vector.NewVector3d(float64(sc.drawer.GetWidth())/2, float64(sc.drawer.GetHeight())/2, 0))
 	objs.Transform(move)
 
-	objs.Accept(sc.zmapper)
+	objs.Accept(sc.drawer)
+	// fmt.Println("drawnd")
 
 	return nil
 }

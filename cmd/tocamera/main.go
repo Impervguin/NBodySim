@@ -8,11 +8,8 @@ import (
 	"NBodySim/internal/reader"
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
-	"NBodySim/internal/zmapper/approximator"
 	"NBodySim/internal/zmapper/mapper"
-	"NBodySim/internal/zmapper/objectdrawer"
 	"image/color"
-	"math"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -29,23 +26,6 @@ func main() {
 		panic(err)
 	}
 
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/8_octahedron.obj")
-	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
-	cube2, err := dir.Construct()
-	if err != nil {
-		panic(err)
-	}
-	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(-50, 0, 0)))
-
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/8_octahedron.obj")
-	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
-	cube3, err := dir.Construct()
-	if err != nil {
-		panic(err)
-	}
-	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 40, -30)))
-	// fmt.Println(cube3.GetCenter())
-
 	cam := object.NewCamera(
 		*vector.NewVector3d(0, 0, -100),
 		*vector.NewVector3d(0, 0, 1),
@@ -56,9 +36,8 @@ func main() {
 	sim := simulation.NewSimulation()
 	sim.SetCamera(cam)
 	sim.AddObject(cube, *vector.NewVector3d(0, 0, 0), 10000000000)
-	sim.AddObject(cube2, *vector.NewVector3d(0, 0, 0), 10000000000)
-	sim.AddObject(cube3, *vector.NewVector3d(0, 0, 0), 10000000000)
-	sim.SetDt(0.00001)
+
+	sim.SetDt(0.01)
 
 	myApp := app.New()
 	myWindow := myApp.NewWindow("3dSim")
@@ -70,19 +49,24 @@ func main() {
 	go func() {
 		time.Sleep(time.Second)
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
-		cam.Transform(transform.NewRotateAction(vector.NewVector3d(math.Pi/4, -math.Pi/4, 0)))
-		drawerfac := objectdrawer.NewSimpleObjectDrawerFabric(mapper.NewSimpleZmapperFabric(int(width), int(height), color.White), approximator.NewFlatApproximatorFabtic())
+		// cam.Transform(transform.NewRotateAction(vector.NewVector3d(math.Pi/4, -math.Pi/4, 0)))
+		cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, 1000)))
 		conv := conveyer.NewSimulationConveyer(
-			drawerfac,
+			// mapper.NewSimpleZmapperFabric(),
+			mapper.NewParallelPerPolygonZmapperFabric(),
+			int(width),
+			int(height),
+			color.White,
 			sim,
 		)
 		var nraster *canvas.Raster = canvas.NewRasterFromImage(conv.GetImage())
 
 		myWindow.SetContent(nraster)
 		for {
-			time.Sleep(time.Millisecond * 17)
+			time.Sleep(time.Millisecond * 34)
 			sim.UpdateFor(1)
-			cam.Transform(transform.NewRotateAction(vector.NewVector3d(0, math.Pi/60, 0)))
+			// cam.Transform(transform.NewRotateAction(vector.NewVector3d(0, math.Pi/60, 0)))
+			cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -10)))
 			conv.Convey()
 			myWindow.Content().Refresh()
 		}

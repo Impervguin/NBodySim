@@ -4,6 +4,11 @@ type ObjectPool struct {
 	pool map[int64]Object
 }
 
+type ObjectPoolVisitor interface {
+	ObjectVisitor
+	VisitObjectPool(pool *ObjectPool)
+}
+
 func NewObjectPool() *ObjectPool {
 	return &ObjectPool{pool: make(map[int64]Object)}
 }
@@ -11,6 +16,14 @@ func NewObjectPool() *ObjectPool {
 func (op *ObjectPool) GetObject(id int64) (Object, bool) {
 	obj, found := op.pool[id]
 	return obj, found
+}
+
+func (op *ObjectPool) GetObjects() []Object {
+	objects := make([]Object, 0, len(op.pool))
+	for _, obj := range op.pool {
+		objects = append(objects, obj)
+	}
+	return objects
 }
 
 func (op *ObjectPool) PutObject(obj Object) {
@@ -22,8 +35,12 @@ func (op *ObjectPool) RemoveObject(id int64) {
 }
 
 func (op *ObjectPool) Accept(visitor ObjectVisitor) {
-	for _, obj := range op.pool {
-		obj.Accept(visitor)
+	if vis, ok := visitor.(ObjectPoolVisitor); ok {
+		vis.VisitObjectPool(op)
+	} else {
+		for _, obj := range op.pool {
+			obj.Accept(visitor)
+		}
 	}
 }
 

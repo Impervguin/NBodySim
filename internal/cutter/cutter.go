@@ -8,6 +8,7 @@ import (
 type Cutter interface {
 	VisitPolygonObject(po *object.PolygonObject)
 	VisitCamera(cam *object.Camera)
+	VisitPointLight(light *object.PointLight)
 }
 
 type CutterFabric interface {
