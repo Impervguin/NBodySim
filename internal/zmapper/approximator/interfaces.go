@@ -1,7 +1,9 @@
 package approximator
 
 import (
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
+	"NBodySim/internal/zmapper/approximator/colorist"
 	"image/color"
 )
 
@@ -12,9 +14,10 @@ type DiscreteFlatPoint struct {
 }
 
 type DiscreteApproximator interface {
-	ApproximatePolygon(pol *object.Polygon, ch chan<- DiscreteFlatPoint)
+	ApproximatePolygon(pol *object.Polygon, ch chan<- DiscreteFlatPoint) error
 }
 
 type DiscreteApproximatorFabric interface {
-	CreateDiscreteApproximator() DiscreteApproximator
+	CreateDiscreteApproximator(view vector.Vector3d) DiscreteApproximator
+	GetColorist(view vector.Vector3d) colorist.Colorist
 }

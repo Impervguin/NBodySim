@@ -1,8 +1,10 @@
 package objectdrawer
 
 import (
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/zmapper/approximator"
+	"NBodySim/internal/zmapper/approximator/colorist"
 	"NBodySim/internal/zmapper/mapper"
 	"image"
 	"sync"
@@ -11,7 +13,10 @@ import (
 type SimpleObjectDrawer struct {
 	lights       []object.Light
 	zmapper      mapper.Zmapper
+	approxf      approximator.DiscreteApproximatorFabric
 	approx       approximator.DiscreteApproximator
+	view         vector.Vector3d
+	cam          *object.Camera
 	mut          sync.Mutex
 	visitCounter int
 	pchan        chan approximator.DiscreteFlatPoint
@@ -37,7 +42,9 @@ func newSimpleObjectDrawer(zf mapper.ZmapperFabric, af approximator.DiscreteAppr
 	return &SimpleObjectDrawer{
 		lights:       []object.Light{},
 		zmapper:      zf.CreateZmapper(),
-		approx:       af.CreateDiscreteApproximator(),
+		approxf:      af,
+		approx:       nil,
+		view:         vector.Vector3d{0, 0, 0},
 		mut:          sync.Mutex{},
 		visitCounter: 0,
 		pchan:        nil,
@@ -48,6 +55,7 @@ func (sd *SimpleObjectDrawer) startDrawing() {
 	sd.mut.Lock()
 	if sd.visitCounter == 0 {
 		sd.pchan = make(chan approximator.DiscreteFlatPoint)
+		sd.approx = sd.approxf.CreateDiscreteApproximator(sd.view)
 		go sd.zmapper.DrawChannel(sd.pchan)
 	}
 	sd.visitCounter++
@@ -59,8 +67,13 @@ func (sd *SimpleObjectDrawer) stopDrawing() {
 	sd.visitCounter--
 	if sd.visitCounter == 0 {
 		close(sd.pchan)
+		sd.approx = nil
 	}
 	sd.mut.Unlock()
+}
+
+func (sd *SimpleObjectDrawer) SetView(view vector.Vector3d) {
+	sd.view = view
 }
 
 func (sd *SimpleObjectDrawer) VisitObjectPool(op *object.ObjectPool) {
@@ -102,4 +115,8 @@ func (sd *SimpleObjectDrawer) GetWidth() int {
 
 func (sd *SimpleObjectDrawer) GetHeight() int {
 	return sd.zmapper.Bounds().Dy()
+}
+
+func (sd *SimpleObjectDrawer) GetColorist(view vector.Vector3d) colorist.Colorist {
+	return sd.approxf.GetColorist(view)
 }

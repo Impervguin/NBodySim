@@ -1,21 +1,27 @@
 package object
 
 import (
+	"NBodySim/internal/mathutils"
 	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/transform"
 	"image/color"
+	"math"
 )
+
+const diffuseCoefficient = 0.5
+const minimalDistance = 100
+const diffuseDistanceFactor float64 = 1. / minimalDistance
 
 type PointLight struct {
 	ObjectWithId
 	InvisibleObject
-	intensity color.Color
+	intensity color.RGBA
 	position  vector.Vector3d
 }
 
 func NewPointLight(intensity color.Color, position vector.Vector3d) *PointLight {
 	p := &PointLight{
-		intensity: intensity,
+		intensity: mathutils.ToRGBA(intensity),
 		position:  position,
 	}
 	p.id = getNextId()
@@ -39,7 +45,7 @@ func (p *PointLight) SetPosition(position vector.Vector3d) {
 }
 
 func (p *PointLight) SetIntensity(intensity color.Color) {
-	p.intensity = intensity
+	p.intensity = mathutils.ToRGBA(intensity)
 }
 
 func (p *PointLight) GetId() int64 {
@@ -58,17 +64,28 @@ func (p *PointLight) Transform(action transform.TransformAction) {
 	action.ApplyToVector(&p.position)
 }
 
-func (p *PointLight) CalculateLightContribution(point, view vector.Vector3d, color color.Color) color.Color {
-	// lightVector := vector.SubtractVectors(&point, &p.position)
-	// lightVector.Normalize()
+func (p *PointLight) CalculateLightContribution(point, view, normal vector.Vector3d, c color.Color) color.Color {
+	// dirToCam := vector.SubtractVectors(&view, &point)
+	lightVector := vector.SubtractVectors(&p.position, &point)
+	distance := math.Sqrt(lightVector.Square())
+	lightVector.Normalize()
+	diffuse := math.Abs(lightVector.Dot(&normal)*diffuseCoefficient) / ((minimalDistance + distance) * diffuseDistanceFactor)
+	diff := color.RGBA{
+		R: uint8(float64(p.intensity.R) * diffuse),
+		G: uint8(float64(p.intensity.G) * diffuse),
+		B: uint8(float64(p.intensity.B) * diffuse),
+		A: p.intensity.A,
+	}
 
-	// distance := vector.Distance(point, p.position)
-	// attenuation := 1 / (p.attenuationConstant + distance*distance*p.attenuationLinear + distance*distance*distance*p.attenuationQuadratic)
+	res := diff
 
-	// diffuse := vector.DotProduct(lightVector, &view) * attenuation
-	// if diffuse < 0 {
-	// 	diffuse = 0
-	// }
+	r, g, b, a := c.RGBA()
+	t := color.RGBA{
+		R: uint8(float64(r>>8) * (float64(res.R) / 255)),
+		G: uint8(float64(g>>8) * (float64(res.G) / 255)),
+		B: uint8(float64(b>>8) * (float64(res.B) / 255)),
+		A: uint8(a >> 8),
+	}
 
-	return p.intensity
+	return t
 }

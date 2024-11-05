@@ -2,10 +2,14 @@ package approximator
 
 import (
 	"NBodySim/internal/mathutils"
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
+	"NBodySim/internal/zmapper/approximator/colorist"
+	"fmt"
 )
 
 type FlatApproximator struct {
+	view vector.Vector3d
 }
 
 type FlatApproximatorFabric struct {
@@ -15,19 +19,25 @@ func NewFlatApproximatorFabtic() *FlatApproximatorFabric {
 	return &FlatApproximatorFabric{}
 }
 
-func (f *FlatApproximatorFabric) CreateDiscreteApproximator() DiscreteApproximator {
-	return newFlatApproximator()
+func (f *FlatApproximatorFabric) CreateDiscreteApproximator(view vector.Vector3d) DiscreteApproximator {
+	return newFlatApproximator(view)
 }
 
-func newFlatApproximator() *FlatApproximator {
-	return &FlatApproximator{}
+func newFlatApproximator(view vector.Vector3d) *FlatApproximator {
+	return &FlatApproximator{view: view}
 }
 
-func (a *FlatApproximator) ApproximatePolygon(p *object.Polygon, ch chan<- DiscreteFlatPoint) {
+func (a *FlatApproximator) ApproximatePolygon(p *object.Polygon, ch chan<- DiscreteFlatPoint) error {
+	model := p.GetColorModel()
+	flat, ok := model.(*colorist.FlatColorModel)
+	if !ok {
+		return fmt.Errorf("polygon color model is not a flat color model")
+	}
+
 	p1, p2, p3 := p.GetVertices()
-	// fmt.Println(p1, p2, p3)
 
-	color := p.GetColor()
+	color := flat.C
+
 	if p1.Y < p2.Y {
 		p1, p2 = p2, p1
 	}
@@ -72,4 +82,9 @@ func (a *FlatApproximator) ApproximatePolygon(p *object.Polygon, ch chan<- Discr
 			}
 		}
 	}
+	return nil
+}
+
+func (a *FlatApproximatorFabric) GetColorist(view vector.Vector3d) colorist.Colorist {
+	return colorist.NewFlatColorist(view)
 }

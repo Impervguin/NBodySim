@@ -30,3 +30,17 @@ func (lp *LightPool) Accept(visitor LightVisitor) {
 func (lp *LightPool) GetCount() int {
 	return len(lp.lights)
 }
+
+func (lp *LightPool) Clone() *LightPool {
+	newPool := NewLightPool()
+	for _, light := range lp.lights {
+		newPool.PutLight(light.Clone())
+	}
+	return newPool
+}
+
+func (lp *LightPool) Transform(action TransformAction) {
+	for _, light := range lp.lights {
+		light.Transform(action)
+	}
+}

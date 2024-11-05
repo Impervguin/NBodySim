@@ -6,8 +6,6 @@ import (
 	"NBodySim/internal/reader"
 	"fmt"
 	"image/color"
-
-	"math/rand"
 )
 
 func CheckConvexPolygon(vertices []*vector.Vector3d) bool {
@@ -22,9 +20,6 @@ func CheckConvexPolygon(vertices []*vector.Vector3d) bool {
 	for i := 1; i < n; i++ {
 		cur := vector.SubtractVectors(vertices[(i+1)%n], vertices[i])
 		curNormal := last.Cross(cur)
-		// fmt.Println(normal)
-		// fmt.Println(curNormal)
-		// fmt.Println(normal.Dot(curNormal))
 		if curNormal.Dot(normal) < 0 {
 			return false
 		}
@@ -83,8 +78,7 @@ func (b *ClassicPolygonBuilder) buildPolygon() error {
 
 		if len(polygon.Vertexes) > 3 {
 			start := polygon.Vertexes[0]
-			color := color.RGBA{R: uint8(rand.Intn(256)), G: uint8(rand.Intn(256)), B: uint8(rand.Intn(256)), A: 255}
-			// color := color.RGBA{R: 255, B: 0, G: 0, A: 255}
+			color := color.RGBA{R: 255, B: 0, G: 0, A: 255}
 			for i := range polygon.Vertexes[1 : len(polygon.Vertexes)-1] {
 				opolygon := object.NewPolygon(
 					b.vertices[polygon.Vertexes[start]],
@@ -99,8 +93,7 @@ func (b *ClassicPolygonBuilder) buildPolygon() error {
 				b.vertices[polygon.Vertexes[0]],
 				b.vertices[polygon.Vertexes[1]],
 				b.vertices[polygon.Vertexes[2]],
-				color.RGBA{R: uint8(rand.Intn(256)), G: uint8(rand.Intn(256)), B: uint8(rand.Intn(256)), A: 255},
-				// color.RGBA{R: 255, B: 0, G: 0, A: 255},
+				color.RGBA{R: 255, B: 0, G: 0, A: 255},
 			)
 			polygons = append(polygons, opolygon)
 		} else {

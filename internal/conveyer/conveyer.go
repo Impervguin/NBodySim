@@ -28,8 +28,11 @@ func (sc *SimulationConveyer) GetImage() image.Image {
 
 func (sc *SimulationConveyer) Convey() error {
 	sc.drawer.ResetImage()
+
 	objs := sc.sim.GetObjectsClone()
-	cam := sc.sim.GetCamera()
+	lights := sc.sim.GetLightsClone()
+	camo := sc.sim.GetCamera().Clone()
+	cam, _ := camo.(*object.Camera)
 
 	view := object.NewCameraViewAction(cam)
 	canvas := transform.NewViewportToCanvas(float64(sc.drawer.GetWidth()), float64(sc.drawer.GetHeight()))
@@ -38,13 +41,17 @@ func (sc *SimulationConveyer) Convey() error {
 	// light and shadows here
 
 	objs.Transform(view)
+	cam.Transform(view)
+	lights.Transform(view)
 
 	// shadow here
 
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
 
-	// light here
+	colorist := sc.drawer.GetColorist(cam.GetCenter())
+	lights.Accept(colorist)
+	objs.Accept(colorist)
 
 	objs.Transform(canvas)
 	objs.Transform(persp)
@@ -54,7 +61,6 @@ func (sc *SimulationConveyer) Convey() error {
 	objs.Transform(move)
 
 	objs.Accept(sc.drawer)
-	// fmt.Println("drawnd")
 
 	return nil
 }

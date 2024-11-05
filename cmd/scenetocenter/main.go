@@ -62,12 +62,15 @@ func main() {
 		1, 1, 1,
 	)
 
+	light1 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, 0))
+
 	sim := simulation.NewSimulation()
 	sim.SetCamera(cam)
-	sim.AddObject(cube, *vector.NewVector3d(0.2, 0, 0), 100000000000)
-	sim.AddObject(cube2, *vector.NewVector3d(0, 0, -.2), 100000000000)
-	sim.AddObject(cube3, *vector.NewVector3d(-.2, 0, 0), 100000000000)
-	sim.AddObject(cube4, *vector.NewVector3d(0, 0, .2), 100000000000)
+	sim.AddObject(cube, *vector.NewVector3d(0, 0, 0), 100000000000)
+	sim.AddObject(cube2, *vector.NewVector3d(0, 0, 0), 100000000000)
+	sim.AddObject(cube3, *vector.NewVector3d(0, 0, 0), 100000000000)
+	sim.AddObject(cube4, *vector.NewVector3d(0, 0, 0), 100000000000)
+	sim.AddLight(light1)
 	sim.SetDt(0.00001)
 
 	myApp := app.New()
@@ -81,7 +84,7 @@ func main() {
 		time.Sleep(time.Second)
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
 		cam.Transform(transform.NewRotateAction(vector.NewVector3d(-math.Pi/4, -math.Pi/4, 0)))
-		drawerfac := objectdrawer.NewSimpleObjectDrawerFabric(mapper.NewSimpleZmapperFabric(int(width), int(height), color.White), approximator.NewFlatApproximatorFabtic())
+		drawerfac := objectdrawer.NewSimpleObjectDrawerFabric(mapper.NewSimpleZmapperFabric(int(width), int(height), color.Black), approximator.NewFlatApproximatorFabtic())
 		conv := conveyer.NewSimulationConveyer(
 			drawerfac,
 			sim,

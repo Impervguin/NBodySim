@@ -11,7 +11,7 @@ type Simulation struct {
 	objects    object.ObjectPool
 	nbody      nbody.NBody
 	camera     *object.Camera
-	lights     []*object.Object
+	lights     object.LightPool
 	dt         float64
 	timeMoment float64
 }
@@ -27,6 +27,7 @@ func (s *Simulation) init() {
 	s.dt = 0.01
 	s.timeMoment = 0
 	s.objects = *object.NewObjectPool()
+	s.lights = *object.NewLightPool()
 	s.camera = object.NewCamera(*vector.NewVector3d(0, 0, 0), *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, 1, 0), 1, 1, 1)
 }
 
@@ -89,4 +90,16 @@ func (s *Simulation) AddObject(obj object.Object, velocity vector.Vector3d, mass
 	s.objects.PutObject(obj)
 
 	return nil
+}
+
+func (s *Simulation) AddLight(light object.Light) error {
+	if _, ok := s.lights.GetLight(light.GetId()); ok {
+		return fmt.Errorf("light with id %d already exists", light.GetId())
+	}
+	s.lights.PutLight(light)
+	return nil
+}
+
+func (s *Simulation) GetLightsClone() *object.LightPool {
+	return s.lights.Clone()
 }
