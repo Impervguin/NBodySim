@@ -1,7 +1,6 @@
 package approximator
 
 import (
-	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/zmapper/approximator/colorist"
 	"image/color"
@@ -18,6 +17,6 @@ type DiscreteApproximator interface {
 }
 
 type DiscreteApproximatorFabric interface {
-	CreateDiscreteApproximator(view vector.Vector3d) DiscreteApproximator
-	GetColorist(view vector.Vector3d) colorist.Colorist
+	CreateDiscreteApproximator() DiscreteApproximator
+	GetColorist() colorist.Colorist
 }

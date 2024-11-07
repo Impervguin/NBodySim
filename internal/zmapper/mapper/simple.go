@@ -47,9 +47,7 @@ func (zm *SimpleZmapper) setPoint(x, y int, z float64, color color.Color) {
 }
 
 func (zm *SimpleZmapper) DrawChannel(ch <-chan approximator.DiscreteFlatPoint) {
-	// fmt.Println("drawing channel... total points: ", len(ch))
 	for dp := range ch {
-		// fmt.Printf("drawing point: (%d, %d, %f, %v)\n", dp.X, dp.Y, dp.Z, dp.Color)
 		zm.setPoint(dp.X, dp.Y, dp.Z, dp.Color)
 	}
 }

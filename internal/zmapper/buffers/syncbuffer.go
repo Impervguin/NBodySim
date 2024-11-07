@@ -21,9 +21,15 @@ func NewSyncBuffer(width, height int) *SyncBuffer {
 }
 
 func (s *SyncBuffer) Lock(x, y int) {
+	if (x < 0 || x >= s.width) || (y < 0 || y >= s.height) {
+		return
+	}
 	s.buf[y][x].Lock()
 }
 
 func (s *SyncBuffer) Unlock(x, y int) {
+	if (x < 0 || x >= s.width) || (y < 0 || y >= s.height) {
+		return
+	}
 	s.buf[y][x].Unlock()
 }

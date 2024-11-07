@@ -55,7 +55,7 @@ func (sd *SimpleObjectDrawer) startDrawing() {
 	sd.mut.Lock()
 	if sd.visitCounter == 0 {
 		sd.pchan = make(chan approximator.DiscreteFlatPoint)
-		sd.approx = sd.approxf.CreateDiscreteApproximator(sd.view)
+		sd.approx = sd.approxf.CreateDiscreteApproximator()
 		go sd.zmapper.DrawChannel(sd.pchan)
 	}
 	sd.visitCounter++
@@ -117,6 +117,6 @@ func (sd *SimpleObjectDrawer) GetHeight() int {
 	return sd.zmapper.Bounds().Dy()
 }
 
-func (sd *SimpleObjectDrawer) GetColorist(view vector.Vector3d) colorist.Colorist {
-	return sd.approxf.GetColorist(view)
+func (sd *SimpleObjectDrawer) GetColorist() colorist.Colorist {
+	return sd.approxf.GetColorist()
 }

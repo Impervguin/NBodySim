@@ -49,7 +49,8 @@ func (sc *SimulationConveyer) Convey() error {
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
 
-	colorist := sc.drawer.GetColorist(cam.GetCenter())
+	colorist := sc.drawer.GetColorist()
+	cam.Accept(colorist)
 	lights.Accept(colorist)
 	objs.Accept(colorist)
 

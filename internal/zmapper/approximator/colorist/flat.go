@@ -16,8 +16,8 @@ type FlatColorModel struct {
 	C color.RGBA
 }
 
-func NewFlatColorist(view vector.Vector3d) *FlatColorist {
-	return &FlatColorist{lights: make([]object.Light, 0), view: view}
+func NewFlatColorist() *FlatColorist {
+	return &FlatColorist{lights: make([]object.Light, 0), view: *vector.NewVector3d(0, 0, 0)}
 }
 
 func (c *FlatColorist) VisitPolygonObject(po *object.PolygonObject) {

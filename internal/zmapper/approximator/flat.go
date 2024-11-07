@@ -19,12 +19,12 @@ func NewFlatApproximatorFabtic() *FlatApproximatorFabric {
 	return &FlatApproximatorFabric{}
 }
 
-func (f *FlatApproximatorFabric) CreateDiscreteApproximator(view vector.Vector3d) DiscreteApproximator {
-	return newFlatApproximator(view)
+func (f *FlatApproximatorFabric) CreateDiscreteApproximator() DiscreteApproximator {
+	return newFlatApproximator()
 }
 
-func newFlatApproximator(view vector.Vector3d) *FlatApproximator {
-	return &FlatApproximator{view: view}
+func newFlatApproximator() *FlatApproximator {
+	return &FlatApproximator{}
 }
 
 func (a *FlatApproximator) ApproximatePolygon(p *object.Polygon, ch chan<- DiscreteFlatPoint) error {
@@ -85,6 +85,6 @@ func (a *FlatApproximator) ApproximatePolygon(p *object.Polygon, ch chan<- Discr
 	return nil
 }
 
-func (a *FlatApproximatorFabric) GetColorist(view vector.Vector3d) colorist.Colorist {
-	return colorist.NewFlatColorist(view)
+func (a *FlatApproximatorFabric) GetColorist() colorist.Colorist {
+	return colorist.NewFlatColorist()
 }

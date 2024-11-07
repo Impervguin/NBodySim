@@ -1,7 +1,6 @@
 package objectdrawer
 
 import (
-	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/zmapper/approximator/colorist"
 	"image"
@@ -16,7 +15,7 @@ type ObjectDrawer interface {
 	GetWidth() int
 	GetHeight() int
 	ResetImage()
-	GetColorist(view vector.Vector3d) colorist.Colorist
+	GetColorist() colorist.Colorist
 }
 
 type ObjectDrawerFabric interface {

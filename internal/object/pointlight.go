@@ -19,6 +19,11 @@ type PointLight struct {
 	position  vector.Vector3d
 }
 
+// func MirrorVector3d(normal, v vector.Vector3d) vector.Vector3d {
+// 	normal.Normalize()
+
+// }
+
 func NewPointLight(intensity color.Color, position vector.Vector3d) *PointLight {
 	p := &PointLight{
 		intensity: mathutils.ToRGBA(intensity),

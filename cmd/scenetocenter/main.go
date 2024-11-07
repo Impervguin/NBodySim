@@ -84,7 +84,7 @@ func main() {
 		time.Sleep(time.Second)
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
 		cam.Transform(transform.NewRotateAction(vector.NewVector3d(-math.Pi/4, -math.Pi/4, 0)))
-		drawerfac := objectdrawer.NewSimpleObjectDrawerFabric(mapper.NewSimpleZmapperFabric(int(width), int(height), color.Black), approximator.NewFlatApproximatorFabtic())
+		drawerfac := objectdrawer.NewSimpleObjectDrawerFabric(mapper.NewParallelZmapperFabric(int(width), int(height), color.Black), approximator.NewFlatApproximatorFabtic())
 		conv := conveyer.NewSimulationConveyer(
 			drawerfac,
 			sim,
