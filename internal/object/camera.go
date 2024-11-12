@@ -8,13 +8,16 @@ import (
 type Camera struct {
 	ObjectWithId
 	InvisibleObject
-	position vector.Vector3d
-	forward  vector.Vector3d
-	right    vector.Vector3d
-	up       vector.Vector3d
-	px       float64 // Размер окна просмотра по x(в пространстве камеры)
-	py       float64 // Размер окна просмотра по y(в пространстве камеры)
-	d        float64 // Дальность от позиции камеры, до окна просмотра
+	position            vector.Vector3d
+	forward             vector.Vector3d
+	up                  vector.Vector3d
+	px                  float64 // Размер окна просмотра по x(в пространстве камеры)
+	py                  float64 // Размер окна просмотра по y(в пространстве камеры)
+	d                   float64 // Дальность от позиции камеры, до окна просмотра
+	view                CameraViewAction
+	modifiedView        bool
+	perspective         PerspectiveTransform
+	modifiedPerspective bool
 }
 
 func NewCamera(position, forward, up vector.Vector3d, px, py, d float64) *Camera {
@@ -28,6 +31,10 @@ func NewCamera(position, forward, up vector.Vector3d, px, py, d float64) *Camera
 		py:       py,
 		d:        d,
 	}
+	cam.view = *NewCameraViewAction(cam)
+	cam.modifiedView = false
+	cam.perspective = *NewPerspectiveTransform(cam)
+	cam.modifiedPerspective = false
 	cam.id = getNextId()
 	return cam
 }
@@ -58,6 +65,9 @@ func (c *Camera) Transform(action transform.TransformAction) {
 	action.ApplyToVector(&c.up)
 	(*fromPosition).ApplyToVector(&c.up)
 	c.up.Normalize()
+
+	c.modifiedPerspective = true
+	c.modifiedView = true
 }
 
 func (c *Camera) GetViewMatrix() *vector.Matrix4d {
@@ -91,4 +101,22 @@ func (c *Camera) GetHeight() float64 {
 
 func (c *Camera) GetDistance() float64 {
 	return c.d
+}
+
+func (c *Camera) GetViewAction() *CameraViewAction {
+	if !c.modifiedView {
+		return &c.view
+	}
+	c.modifiedView = false
+	c.view = *NewCameraViewAction(c)
+	return &c.view
+}
+
+func (c *Camera) GetPerspectiveTransform() *PerspectiveTransform {
+	if !c.modifiedPerspective {
+		return &c.perspective
+	}
+	c.modifiedPerspective = false
+	c.perspective = *NewPerspectiveTransform(c)
+	return &c.perspective
 }

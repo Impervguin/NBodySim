@@ -9,6 +9,7 @@ import (
 type Zmapper interface {
 	image.Image
 	DrawChannel(ch <-chan approximator.DiscreteFlatPoint)
+	SetPointDepth(p *approximator.DiscreteFlatPoint)
 	GetScreenFunction() buffers.ScreenFunction
 	Reset()
 }

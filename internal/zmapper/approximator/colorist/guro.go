@@ -7,10 +7,14 @@ import (
 	"image/color"
 )
 
-type GuroColorModel struct {
+type PolygonColor struct {
 	C1 color.RGBA
 	C2 color.RGBA
 	C3 color.RGBA
+}
+
+type GuroColorModel struct {
+	C map[int64]PolygonColor
 }
 
 type GuroColorist struct {
@@ -32,18 +36,14 @@ func (c *GuroColorist) processPolygon(p *object.Polygon) {
 	normal := p.GetNormal()
 	pcolor := p.GetColor()
 	color := GuroColorModel{
-		C1: color.RGBA{0, 0, 0, 255},
-		C2: color.RGBA{0, 0, 0, 255},
-		C3: color.RGBA{0, 0, 0, 255},
+		C: make(map[int64]PolygonColor, len(c.lights)),
 	}
+	v1, v2, v3 := p.GetVertices()
 	for _, l := range c.lights {
-		v1, v2, v3 := p.GetVertices()
 		l1color := l.CalculateLightContribution(*v1, c.view, *normal, pcolor)
-		color.C1 = mathutils.AddRGBA(color.C1, l1color)
 		l2color := l.CalculateLightContribution(*v2, c.view, *normal, pcolor)
-		color.C2 = mathutils.AddRGBA(color.C2, l2color)
 		l3color := l.CalculateLightContribution(*v3, c.view, *normal, pcolor)
-		color.C3 = mathutils.AddRGBA(color.C3, l3color)
+		color.C[l.GetId()] = PolygonColor{mathutils.ToRGBA(l1color), mathutils.ToRGBA(l2color), mathutils.ToRGBA(l3color)}
 	}
 	p.SetColorModel(&color)
 }
@@ -54,4 +54,10 @@ func (c *GuroColorist) VisitPointLight(light *object.PointLight) {
 
 func (c *GuroColorist) VisitCamera(cam *object.Camera) {
 	c.view = cam.GetCenter()
+}
+
+func (c *GuroColorist) VisitObjectPool(pool *object.ObjectPool) {
+	for _, obj := range pool.GetObjects() {
+		obj.Accept(c)
+	}
 }

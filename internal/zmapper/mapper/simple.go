@@ -74,3 +74,7 @@ func (zm *SimpleZmapper) Bounds() image.Rectangle {
 func (zm *SimpleZmapper) At(x, y int) color.Color {
 	return zm.sbuf.GetPoint(x, y)
 }
+
+func (zm *SimpleZmapper) SetPointDepth(p *approximator.DiscreteFlatPoint) {
+	p.Z, _ = zm.dbuf.GetDepth(p.X, p.Y)
+}

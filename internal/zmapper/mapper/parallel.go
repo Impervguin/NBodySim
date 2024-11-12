@@ -58,3 +58,9 @@ func (zm *ParallelZmapper) DrawChannel(ch <-chan approximator.DiscreteFlatPoint)
 		}()
 	}
 }
+
+func (zm *ParallelZmapper) SetPointDepth(p *approximator.DiscreteFlatPoint) {
+	zm.sync.Lock(p.X, p.Y)
+	p.Z, _ = zm.dbuf.GetDepth(p.X, p.Y)
+	zm.sync.Unlock(p.X, p.Y)
+}

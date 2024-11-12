@@ -1,12 +1,11 @@
 package object
 
+import (
+	"NBodySim/internal/transform"
+)
+
 type ObjectPool struct {
 	pool map[int64]Object
-}
-
-type ObjectPoolVisitor interface {
-	ObjectVisitor
-	VisitObjectPool(pool *ObjectPool)
 }
 
 func NewObjectPool() *ObjectPool {
@@ -35,23 +34,16 @@ func (op *ObjectPool) RemoveObject(id int64) {
 }
 
 func (op *ObjectPool) Accept(visitor ObjectVisitor) {
-	if vis, ok := visitor.(ObjectPoolVisitor); ok {
-		vis.VisitObjectPool(op)
-	} else {
-		for _, obj := range op.pool {
-			obj.Accept(visitor)
-		}
-	}
+	visitor.VisitObjectPool(op)
 }
 
 func (op *ObjectPool) GetCount() int {
 	return len(op.pool)
 }
 
-func (op *ObjectPool) Transform(t TransformAction) {
+func (op *ObjectPool) Transform(t transform.TransformAction) {
 	for _, obj := range op.pool {
 		obj.Transform(t)
-
 	}
 }
 

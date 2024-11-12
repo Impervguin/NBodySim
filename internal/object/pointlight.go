@@ -8,7 +8,7 @@ import (
 	"math"
 )
 
-const diffuseCoefficient = 0.5
+const diffuseCoefficient = 1
 const minimalDistance = 100
 const diffuseDistanceFactor float64 = 1. / minimalDistance
 
@@ -62,7 +62,12 @@ func (p *PointLight) GetCenter() vector.Vector3d {
 }
 
 func (p *PointLight) Clone() Light {
-	return NewPointLight(p.intensity, *p.position.Copy())
+	np := &PointLight{
+		position:  p.position,
+		intensity: p.intensity,
+	}
+	np.id = p.GetId()
+	return np
 }
 
 func (p *PointLight) Transform(action transform.TransformAction) {

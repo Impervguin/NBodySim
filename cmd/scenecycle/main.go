@@ -64,6 +64,8 @@ func main() {
 
 	light1 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, 0))
 	light2 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, 10))
+	// light3 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, -15))
+	// light4 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 10, -5))
 
 	sim := simulation.NewSimulation()
 	sim.SetCamera(cam)
@@ -73,6 +75,8 @@ func main() {
 	sim.AddObject(cube4, *vector.NewVector3d(0, 0, .02), 1000000000)
 	sim.AddLight(light1)
 	sim.AddLight(light2)
+	// sim.AddLight(light3)
+	// sim.AddLight(light4)
 	sim.SetDt(0.00001)
 
 	myApp := app.New()

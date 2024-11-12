@@ -4,6 +4,15 @@ import (
 	"image/color"
 )
 
+func MultRGBA64(c color.Color, coeff float64) color.RGBA64 {
+	r, g, b, _ := c.RGBA()
+	return color.RGBA64{
+		R: uint16(min(float64(r)*coeff, 65535)),
+		G: uint16(min(float64(g)*coeff, 65535)),
+		B: uint16(min(float64(b)*coeff, 65535)),
+	}
+}
+
 func ToRGBA(c color.Color) color.RGBA {
 	r, g, b, a := c.RGBA()
 	return color.RGBA{R: uint8(r >> 8), G: uint8(g >> 8), B: uint8(b >> 8), A: uint8(a >> 8)}
@@ -62,6 +71,5 @@ func LinearColorInterpolation(x1, x2 int, c1, c2 color.Color) []color.RGBA64 {
 		c.B = uint16(int16(c.B) + db)
 		c.A = uint16(int16(c.A) + da)
 	}
-	// fmt.Println(res)
 	return res
 }

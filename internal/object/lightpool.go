@@ -1,5 +1,7 @@
 package object
 
+import "NBodySim/internal/transform"
+
 type LightPool struct {
 	lights map[int64]Light
 }
@@ -39,7 +41,7 @@ func (lp *LightPool) Clone() *LightPool {
 	return newPool
 }
 
-func (lp *LightPool) Transform(action TransformAction) {
+func (lp *LightPool) Transform(action transform.TransformAction) {
 	for _, light := range lp.lights {
 		light.Transform(action)
 	}
