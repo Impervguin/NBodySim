@@ -9,3 +9,5 @@ type ObjectVisitor interface {
 type LightVisitor interface {
 	VisitPointLight(light *PointLight)
 }
+
+

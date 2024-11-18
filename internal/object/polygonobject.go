@@ -88,7 +88,7 @@ func (po *PolygonObject) Clone() Object {
 	i := 0
 	for el := po.polygons.Front(); el != nil; el = el.Next() {
 		polygon := el.Value.(*Polygon)
-		polygons[i] = &Polygon{}
+		polygons[i] = polygon.Clone()
 		polygons[i].v1 = vertices[vertMap[polygon.v1]]
 		polygons[i].v2 = vertices[vertMap[polygon.v2]]
 		polygons[i].v3 = vertices[vertMap[polygon.v3]]
@@ -102,6 +102,10 @@ func (po *PolygonObject) Transform(action transform.TransformAction) {
 	for el := po.vertices.Front(); el != nil; el = el.Next() {
 		vertex := el.Value.(*vector.Vector3d)
 		action.ApplyToVector(vertex)
+	}
+	for el := po.polygons.Front(); el != nil; el = el.Next() {
+		polygon := el.Value.(*Polygon)
+		polygon.TransformNormal(action)
 	}
 	action.ApplyToVector(&po.center)
 }

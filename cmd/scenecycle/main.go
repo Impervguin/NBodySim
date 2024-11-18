@@ -9,6 +9,7 @@ import (
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
 	"NBodySim/internal/zmapper/approximator"
+	"NBodySim/internal/zmapper/buffers"
 	"NBodySim/internal/zmapper/mapper"
 	"NBodySim/internal/zmapper/objectdrawer"
 	"image/color"
@@ -22,7 +23,7 @@ import (
 
 func main() {
 
-	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/8_octahedron.obj")
 	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube, err := dir.Construct()
 	if err != nil {
@@ -30,7 +31,7 @@ func main() {
 	}
 	cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, 5)))
 
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/8_octahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube2, err := dir.Construct()
 	if err != nil {
@@ -38,7 +39,7 @@ func main() {
 	}
 	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(5, 0, 0)))
 
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/8_octahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube3, err := dir.Construct()
 	if err != nil {
@@ -47,7 +48,7 @@ func main() {
 	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -5)))
 	// fmt.Println(cube3.GetCenter())
 
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/8_octahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube4, err := dir.Construct()
 	if err != nil {
@@ -90,8 +91,8 @@ func main() {
 		time.Sleep(time.Second)
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
 		cam.Transform(transform.NewRotateAction(vector.NewVector3d(-math.Pi/4, 0, 0)))
-		drawerfac := objectdrawer.NewParallelPerObjectDrawerFabric(mapper.NewParallelZmapperFabric(int(width), int(height), color.Black), approximator.NewGuroApproximatorFabric())
-		conv := conveyer.NewSimulationConveyer(
+		drawerfac := objectdrawer.NewParallelWithoutLightsDrawerFabric(mapper.NewParallelZmapperWithNormalsFabric(int(width), int(height), color.Black, &buffers.DepthBufferNullFabric{}), approximator.NewFlatNormalApproximatorFabric())
+		conv := conveyer.NewRefactoredSimulationConveyer(
 			drawerfac,
 			sim,
 		)

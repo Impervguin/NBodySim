@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ := reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/20_icosahedron.obj")
 	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube, err := dir.Construct()
 	if err != nil {
@@ -29,7 +29,7 @@ func main() {
 	}
 	cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, 30)))
 
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/20_icosahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube2, err := dir.Construct()
 	if err != nil {
@@ -37,7 +37,7 @@ func main() {
 	}
 	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(30, 0, 0)))
 
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/20_icosahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube3, err := dir.Construct()
 	if err != nil {
@@ -46,7 +46,7 @@ func main() {
 	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -30)))
 	// fmt.Println(cube3.GetCenter())
 
-	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/20_icosahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	cube4, err := dir.Construct()
 	if err != nil {
@@ -65,7 +65,7 @@ func main() {
 
 	//
 
-	// read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
+	// read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/20_icosahedron.obj")
 	// dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	// cube5, err := dir.Construct()
 	// if err != nil {
@@ -74,7 +74,7 @@ func main() {
 
 	// cube5.Transform(transform.NewMoveAction(vector.NewVector3d(-100, 0, 100)))
 
-	light1 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, 0))
+	// light1 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, 0))
 	light2 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, -10, 0))
 	// light3 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, -30))
 	// light4 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 10, -5))
@@ -85,7 +85,7 @@ func main() {
 	sim.AddObject(cube2, *vector.NewVector3d(0, 0, -.02), 1000000000)
 	sim.AddObject(cube3, *vector.NewVector3d(-.02, 0, 0), 1000000000)
 	sim.AddObject(cube4, *vector.NewVector3d(0, 0, .02), 1000000000)
-	sim.AddLight(light1)
+	// sim.AddLight(light1)
 	sim.AddLight(light2)
 	// sim.AddLight(light3)
 	// sim.AddLight(light4)
