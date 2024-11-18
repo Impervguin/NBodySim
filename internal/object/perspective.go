@@ -20,8 +20,9 @@ func NewPerspectiveTransform(camera *Camera) *PerspectiveTransform {
 
 func (act *PerspectiveTransform) ApplyToVector(vector *vector.Vector3d) {
 	if vector.Z != 0 {
-		vector.X = vector.X * act.camera.GetPerspectiveXYModifier() / vector.Z
-		vector.Y = vector.Y * act.camera.GetPerspectiveXYModifier() / vector.Z
+		vector.X = vector.X * act.camera.GetDistance() / (vector.Z * act.camera.GetWidth())
+		vector.Y = vector.Y * act.camera.GetDistance() / (vector.Z * act.camera.GetHeight())
+		vector.Z = 1 + 2*act.camera.GetDistance()/vector.Z
 	}
 	if act.after != nil {
 		act.after.ApplyToVector(vector)
@@ -55,9 +56,10 @@ func NewReversePerspectiveTransform(camera *Camera) *ReversePerspectiveTransform
 }
 
 func (act *ReversePerspectiveTransform) ApplyToVector(vector *vector.Vector3d) {
-	if vector.Z != 0 {
-		vector.X = vector.X * vector.Z / (act.camera.GetPerspectiveXYModifier())
-		vector.Y = vector.Y * vector.Z / (act.camera.GetPerspectiveXYModifier())
+	if vector.Z != 1 {
+		vector.Z = 2 * act.camera.GetDistance() / (vector.Z - 1)
+		vector.X = vector.X * (vector.Z * act.camera.GetWidth()) / (act.camera.GetPerspectiveXYModifier())
+		vector.Y = vector.Y * (vector.Z * act.camera.GetHeight()) / (act.camera.GetPerspectiveXYModifier())
 	}
 	if act.after != nil {
 		act.after.ApplyToVector(vector)

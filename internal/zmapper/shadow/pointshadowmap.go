@@ -25,7 +25,7 @@ func NewPointShadowMap(resolution int, light *object.PointLight) *PointShadowMap
 	pshm := &PointShadowMap{
 		resolution: resolution,
 		ligth:      *light,
-		forward:    *NewShadowMap(resolution, *object.NewCamera(pos, *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, 1, 0), 1, 1, 1)),
+		forward:    *NewShadowMap(resolution, *object.NewCamera(pos, *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, 1, 0), 2, 2, 1)),
 	}
 	backcam := pshm.forward.cam.Clone().(*object.Camera)
 	backcam.Transform(transform.NewRotateActionCenter(&pos, vector.NewVector3d(0, math.Pi, 0)))

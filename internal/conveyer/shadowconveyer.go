@@ -32,7 +32,7 @@ func (sc *ShadowSimulationConveyer) Convey() error {
 	sc.drawer.ResetImage()
 
 	objs := sc.sim.GetObjectsClone()
-	shadows := shadowmapper.NewShadowMapper(1024)
+	shadows := shadowmapper.NewShadowMapper(256)
 	lights := sc.sim.GetLightsClone()
 	camo := sc.sim.GetCamera().Clone()
 	cam, _ := camo.(*object.Camera)

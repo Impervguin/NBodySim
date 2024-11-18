@@ -7,7 +7,6 @@ import (
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
 	"NBodySim/internal/zmapper/objectdrawer"
-	"NBodySim/internal/zmapper/shadowmapper"
 	"image"
 )
 
@@ -31,7 +30,6 @@ func (sc *SimulationConveyer) Convey() error {
 	sc.drawer.ResetImage()
 
 	objs := sc.sim.GetObjectsClone()
-	shadows := shadowmapper.NewShadowMapper(512)
 	lights := sc.sim.GetLightsClone()
 	camo := sc.sim.GetCamera().Clone()
 	cam, _ := camo.(*object.Camera)
@@ -45,9 +43,6 @@ func (sc *SimulationConveyer) Convey() error {
 	objs.Transform(view)
 	cam.Transform(view)
 	lights.Transform(view)
-
-	lights.Accept(shadows)
-	objs.Accept(shadows)
 
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)

@@ -13,6 +13,11 @@ func MultRGBA64(c color.Color, coeff float64) color.RGBA64 {
 	}
 }
 
+func ToRGBA64(c color.Color) color.RGBA64 {
+	r, g, b, a := c.RGBA()
+	return color.RGBA64{R: uint16(r), G: uint16(g), B: uint16(b), A: uint16(a)}
+}
+
 func ToRGBA(c color.Color) color.RGBA {
 	r, g, b, a := c.RGBA()
 	return color.RGBA{R: uint8(r >> 8), G: uint8(g >> 8), B: uint8(b >> 8), A: uint8(a >> 8)}

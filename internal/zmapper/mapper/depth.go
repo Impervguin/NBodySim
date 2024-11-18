@@ -27,7 +27,7 @@ func NewDepthZmapperFabric(width, height int, background color.Color) *DepthZmap
 }
 
 func (f *DepthZmapperFabric) CreateZmapper() Zmapper {
-	return newDepthZmapper(f.width, f.height, f.background, &buffers.DepthBufferInfFabric{})
+	return newDepthZmapper(f.width, f.height, f.background, &buffers.DepthBufferNullFabric{})
 }
 
 func (f *DepthZmapper) SetPointDepth(p *approximator.DiscreteFlatPoint) {

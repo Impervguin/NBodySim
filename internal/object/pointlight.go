@@ -15,7 +15,7 @@ const diffuseDistanceFactor float64 = 1. / minimalDistance
 type PointLight struct {
 	ObjectWithId
 	InvisibleObject
-	intensity color.RGBA
+	intensity color.RGBA64
 	position  vector.Vector3d
 }
 
@@ -26,7 +26,7 @@ type PointLight struct {
 
 func NewPointLight(intensity color.Color, position vector.Vector3d) *PointLight {
 	p := &PointLight{
-		intensity: mathutils.ToRGBA(intensity),
+		intensity: mathutils.ToRGBA64(intensity),
 		position:  position,
 	}
 	p.id = getNextId()
@@ -50,7 +50,7 @@ func (p *PointLight) SetPosition(position vector.Vector3d) {
 }
 
 func (p *PointLight) SetIntensity(intensity color.Color) {
-	p.intensity = mathutils.ToRGBA(intensity)
+	p.intensity = mathutils.ToRGBA64(intensity)
 }
 
 func (p *PointLight) GetId() int64 {
@@ -80,20 +80,15 @@ func (p *PointLight) CalculateLightContribution(point, view, normal vector.Vecto
 	distance := math.Sqrt(lightVector.Square())
 	lightVector.Normalize()
 	diffuse := math.Abs(lightVector.Dot(&normal)*diffuseCoefficient) / ((minimalDistance + distance) * diffuseDistanceFactor)
-	diff := color.RGBA{
-		R: uint8(float64(p.intensity.R) * diffuse),
-		G: uint8(float64(p.intensity.G) * diffuse),
-		B: uint8(float64(p.intensity.B) * diffuse),
-		A: p.intensity.A,
-	}
+	diff := mathutils.MultRGBA64(p.intensity, diffuse)
 
 	res := diff
 
 	r, g, b, a := c.RGBA()
 	t := color.RGBA{
-		R: uint8(float64(r>>8) * (float64(res.R) / 255)),
-		G: uint8(float64(g>>8) * (float64(res.G) / 255)),
-		B: uint8(float64(b>>8) * (float64(res.B) / 255)),
+		R: uint8(float64(r>>8) * (float64(res.R) / 65535)),
+		G: uint8(float64(g>>8) * (float64(res.G) / 65535)),
+		B: uint8(float64(b>>8) * (float64(res.B) / 65535)),
 		A: uint8(a >> 8),
 	}
 

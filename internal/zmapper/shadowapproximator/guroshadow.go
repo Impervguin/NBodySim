@@ -106,6 +106,8 @@ func (ga *GuroShadowApproximator) ApproximatePolygon(p *object.Polygon, ch chan<
 					// fmt.Println(p)
 					if !ga.shadows.InShadowBy(id, *p) {
 						curcol = mathutils.AddRGBA64(curcol, c[id][ci])
+					} else {
+						curcol = mathutils.AddRGBA64(curcol, mathutils.MultRGBA64(c[id][ci], 0.15))
 					}
 				}
 				ch <- approximator.DiscreteFlatPoint{X: x, Y: p123[i][1], Z: z, Color: curcol}
@@ -132,10 +134,9 @@ func (ga *GuroShadowApproximator) ApproximatePolygon(p *object.Polygon, ch chan<
 					ga.toShadow.ApplyToVector(p)
 					if !ga.shadows.InShadowBy(id, *p) {
 						curcol = mathutils.AddRGBA64(curcol, c[id][ci])
+					} else {
+						curcol = mathutils.AddRGBA64(curcol, mathutils.MultRGBA64(c[id][ci], 0.15))
 					}
-					// } else {
-					// 	curcol = mathutils.AddRGBA64(curcol, mathutils.MultRGBA64(c[id][ci], 0.2))
-					// }
 				}
 				ch <- approximator.DiscreteFlatPoint{X: x, Y: p13[i][1], Z: z, Color: curcol}
 				ci++

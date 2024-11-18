@@ -22,12 +22,12 @@ type ShadowMap struct {
 	toMap      transform.TransformAction
 }
 
-const BiasCoeff = 0.01
+const BiasCoeff = 0.005
 
 func NewShadowMap(resolution int, cam object.Camera) *ShadowMap {
 	m := &ShadowMap{resolution: resolution,
 		cam:    cam,
-		bias:   BiasCoeff * cam.GetDistance(),
+		bias:   BiasCoeff,
 		cutter: cutter.NewSimpleCamCutter(&cam),
 		drawer: objectdrawer.NewParallelPerObjectDrawerFabric(
 			mapper.NewParallelDepthZmapperFabric(resolution, resolution, color.Black),
@@ -74,12 +74,14 @@ func (m *ShadowMap) PointInShadow(p vector.Vector3d) bool {
 	m.cam.GetViewAction().ApplyToVector(&p)
 	m.cam.GetPerspectiveTransform().ApplyToVector(&p)
 	m.toMap.ApplyToVector(&p)
+	// fmt.Println(p)
 
 	ap := approximator.DiscreteFlatPoint{X: mathutils.ToInt(p.X), Y: mathutils.ToInt(p.Y), Z: 0, Color: color.Black}
 	m.drawer.SetPointDepth(&ap)
+	// fmt.Println(p, ap)
 
 	if (ap.Z) == math.Inf(1) {
 		return false
 	}
-	return ap.Z < p.Z-m.bias*p.Z
+	return ap.Z > p.Z+m.bias
 }
