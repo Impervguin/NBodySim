@@ -2,14 +2,12 @@ package approximator
 
 import (
 	"NBodySim/internal/mathutils"
-	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/zmapper/approximator/colorist"
 	"fmt"
 )
 
 type FlatApproximator struct {
-	view vector.Vector3d
 }
 
 type FlatApproximatorFabric struct {

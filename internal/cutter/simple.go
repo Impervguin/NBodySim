@@ -166,3 +166,9 @@ func (c *SimpleCamCutter) VisitCamera(cam *object.Camera) {
 func (c *SimpleCamCutter) VisitPointLight(light *object.PointLight) {
 	// Nothing to do here, just a placeholder
 }
+
+func (c *SimpleCamCutter) VisitObjectPool(pool *object.ObjectPool) {
+	for _, obj := range pool.GetObjects() {
+		obj.Accept(c)
+	}
+}

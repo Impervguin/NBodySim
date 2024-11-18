@@ -44,7 +44,6 @@ func newSimpleObjectDrawer(zf mapper.ZmapperFabric, af approximator.DiscreteAppr
 		zmapper:      zf.CreateZmapper(),
 		approxf:      af,
 		approx:       nil,
-		view:         vector.Vector3d{0, 0, 0},
 		mut:          sync.Mutex{},
 		visitCounter: 0,
 		pchan:        nil,
@@ -93,7 +92,7 @@ func (sd *SimpleObjectDrawer) VisitPolygonObject(po *object.PolygonObject) {
 }
 
 func (sd *SimpleObjectDrawer) VisitCamera(cam *object.Camera) {
-	// Nothing to do here
+	sd.cam = cam
 }
 
 func (sd *SimpleObjectDrawer) VisitPointLight(light *object.PointLight) {
@@ -119,4 +118,8 @@ func (sd *SimpleObjectDrawer) GetHeight() int {
 
 func (sd *SimpleObjectDrawer) GetColorist() colorist.Colorist {
 	return sd.approxf.GetColorist()
+}
+
+func (sd *SimpleObjectDrawer) SetPointDepth(p *approximator.DiscreteFlatPoint) {
+	sd.zmapper.SetPointDepth(p)
 }

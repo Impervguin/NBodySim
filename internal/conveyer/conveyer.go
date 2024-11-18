@@ -37,14 +37,12 @@ func (sc *SimulationConveyer) Convey() error {
 	view := object.NewCameraViewAction(cam)
 	canvas := transform.NewViewportToCanvas(float64(sc.drawer.GetWidth()), float64(sc.drawer.GetHeight()))
 	persp := object.NewPerspectiveTransform(cam)
-
-	// light and shadows here
+	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
+	move := transform.NewMoveAction(vector.NewVector3d(float64(sc.drawer.GetWidth())/2, float64(sc.drawer.GetHeight())/2, 0))
 
 	objs.Transform(view)
 	cam.Transform(view)
 	lights.Transform(view)
-
-	// shadow here
 
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
@@ -54,11 +52,8 @@ func (sc *SimulationConveyer) Convey() error {
 	lights.Accept(colorist)
 	objs.Accept(colorist)
 
-	objs.Transform(canvas)
 	objs.Transform(persp)
-
-	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
-	move := transform.NewMoveAction(vector.NewVector3d(float64(sc.drawer.GetWidth())/2, float64(sc.drawer.GetHeight())/2, 0))
+	objs.Transform(canvas)
 	objs.Transform(move)
 
 	objs.Accept(sc.drawer)

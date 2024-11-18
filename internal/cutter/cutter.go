@@ -1,6 +1,7 @@
 package cutter
 
 import (
+	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 )
 
@@ -9,6 +10,8 @@ type Cutter interface {
 	VisitPolygonObject(po *object.PolygonObject)
 	VisitCamera(cam *object.Camera)
 	VisitPointLight(light *object.PointLight)
+	VisitObjectPool(pool *object.ObjectPool)
+	SeePoint(point *vector.Vector3d) bool
 }
 
 type CutterFabric interface {

@@ -27,7 +27,7 @@ func NewSimpleZmapperFabric(width, height int, background color.Color) *SimpleZm
 }
 
 func (f *SimpleZmapperFabric) CreateZmapper() Zmapper {
-	return newSimpleZmapper(f.width, f.height, f.background, &buffers.DepthBufferInfFabric{})
+	return newSimpleZmapper(f.width, f.height, f.background, &buffers.DepthBufferNullFabric{})
 }
 
 func newSimpleZmapper(width, height int, background color.Color, df buffers.DepthBufferFabric) *SimpleZmapper {
@@ -73,4 +73,8 @@ func (zm *SimpleZmapper) Bounds() image.Rectangle {
 
 func (zm *SimpleZmapper) At(x, y int) color.Color {
 	return zm.sbuf.GetPoint(x, y)
+}
+
+func (zm *SimpleZmapper) SetPointDepth(p *approximator.DiscreteFlatPoint) {
+	p.Z, _ = zm.dbuf.GetDepth(p.X, p.Y)
 }

@@ -43,3 +43,9 @@ func (c *FlatColorist) VisitPointLight(light *object.PointLight) {
 func (c *FlatColorist) VisitCamera(cam *object.Camera) {
 	c.view = cam.GetCenter()
 }
+
+func (c *FlatColorist) VisitObjectPool(pool *object.ObjectPool) {
+	for _, obj := range pool.GetObjects() {
+		obj.Accept(c)
+	}
+}
