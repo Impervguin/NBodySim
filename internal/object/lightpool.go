@@ -63,6 +63,7 @@ func (lp *LightPool) Transform(action transform.TransformAction) {
 func (lp *LightPool) CalculateLight(point, view, normal vector.Vector3d, col color.Color) color.Color {
 	contribution := mathutils.ToRGBA64(color.Black)
 	for _, light := range lp.lights {
+		// fmt.Println(light)
 		contribution = mathutils.AddRGBA64(contribution, light.CalculateLightContribution(point, view, normal, col))
 	}
 	return contribution

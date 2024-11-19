@@ -18,16 +18,16 @@ type ShadowMap struct {
 	cam        object.Camera
 	cutter     cutter.Cutter
 	drawer     objectdrawer.ObjectDrawer
-	bias       float64
 	toMap      transform.TransformAction
 }
 
-const BiasCoeff = 0.005
+const SimpleBias = 0.0001
+const MinBias = 0.0001
+const MaxBias = 0.001
 
 func NewShadowMap(resolution int, cam object.Camera) *ShadowMap {
 	m := &ShadowMap{resolution: resolution,
 		cam:    cam,
-		bias:   BiasCoeff,
 		cutter: cutter.NewSimpleCamCutter(&cam),
 		drawer: objectdrawer.NewParallelPerObjectDrawerFabric(
 			mapper.NewParallelDepthZmapperFabric(resolution, resolution, color.Black),
@@ -74,14 +74,36 @@ func (m *ShadowMap) PointInShadow(p vector.Vector3d) bool {
 	m.cam.GetViewAction().ApplyToVector(&p)
 	m.cam.GetPerspectiveTransform().ApplyToVector(&p)
 	m.toMap.ApplyToVector(&p)
-	// fmt.Println(p)
 
 	ap := approximator.DiscreteFlatPoint{X: mathutils.ToInt(p.X), Y: mathutils.ToInt(p.Y), Z: 0, Color: color.Black}
 	m.drawer.SetPointDepth(&ap)
-	// fmt.Println(p, ap)
 
 	if (ap.Z) == math.Inf(1) {
 		return false
 	}
-	return ap.Z > p.Z+m.bias
+	return ap.Z > p.Z+SimpleBias
+}
+
+func (m *ShadowMap) SurfacePointInShadow(p vector.Vector3d, normal vector.Vector3d) bool {
+	if !m.PointOnMap(p) {
+		return false
+	}
+	lightPos := m.cam.GetCenter()
+	lightDir := vector.SubtractVectors(&p, &lightPos)
+	lightDir.Normalize()
+	biasCoeff := math.Abs(lightDir.Dot(&normal))
+	m.cam.GetViewAction().ApplyToVector(&p)
+	m.cam.GetPerspectiveTransform().ApplyToVector(&p)
+	m.toMap.ApplyToVector(&p)
+
+	ap := approximator.DiscreteFlatPoint{X: mathutils.ToInt(p.X), Y: mathutils.ToInt(p.Y), Z: 0, Color: color.Black}
+	m.drawer.SetPointDepth(&ap)
+
+	if (ap.Z) == math.Inf(1) {
+		return false
+	}
+
+	bias := math.Max(MaxBias*(1-biasCoeff), MinBias)
+	// bias := SimpleBias * math.Tan(math.Acos(biasCoeff))
+	return ap.Z > p.Z-bias
 }

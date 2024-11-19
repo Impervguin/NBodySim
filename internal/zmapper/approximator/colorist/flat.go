@@ -40,6 +40,10 @@ func (c *FlatColorist) VisitPointLight(light *object.PointLight) {
 	c.lights = append(c.lights, light)
 }
 
+func (c *FlatColorist) VisitPointLightShadow(light *object.PointLightShadow) {
+	c.lights = append(c.lights, light)
+}
+
 func (c *FlatColorist) VisitCamera(cam *object.Camera) {
 	c.view = cam.GetCenter()
 }

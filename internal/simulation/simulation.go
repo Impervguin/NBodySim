@@ -94,6 +94,7 @@ func (s *Simulation) AddObject(obj object.Object, velocity vector.Vector3d, mass
 
 func (s *Simulation) AddLight(light object.Light) error {
 	if _, ok := s.lights.GetLight(light.GetId()); ok {
+		fmt.Println(light.GetId())
 		return fmt.Errorf("light with id %d already exists", light.GetId())
 	}
 	s.lights.PutLight(light)

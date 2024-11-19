@@ -52,6 +52,10 @@ func (c *GuroColorist) VisitPointLight(light *object.PointLight) {
 	c.lights = append(c.lights, light)
 }
 
+func (c *GuroColorist) VisitPointLightShadow(light *object.PointLightShadow) {
+	c.lights = append(c.lights, light)
+}
+
 func (c *GuroColorist) VisitCamera(cam *object.Camera) {
 	c.view = cam.GetCenter()
 }

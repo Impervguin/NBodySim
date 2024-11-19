@@ -4,13 +4,14 @@ import (
 	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/transform"
+	"fmt"
 	"math"
 	"sync"
 )
 
 type PointShadowMap struct {
 	resolution int
-	ligth      object.PointLight
+	ligth      object.PointLightShadow
 
 	forward ShadowMap
 	back    ShadowMap
@@ -20,12 +21,14 @@ type PointShadowMap struct {
 	bottom  ShadowMap
 }
 
-func NewPointShadowMap(resolution int, light *object.PointLight) *PointShadowMap {
+const shadowCamDistance = 0.1
+
+func NewPointShadowMap(resolution int, light *object.PointLightShadow) *PointShadowMap {
 	pos := light.GetCenter()
 	pshm := &PointShadowMap{
 		resolution: resolution,
 		ligth:      *light,
-		forward:    *NewShadowMap(resolution, *object.NewCamera(pos, *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, 1, 0), 2, 2, 1)),
+		forward:    *NewShadowMap(resolution, *object.NewCamera(pos, *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, 1, 0), shadowCamDistance*2, shadowCamDistance*2, shadowCamDistance)),
 	}
 	backcam := pshm.forward.cam.Clone().(*object.Camera)
 	backcam.Transform(transform.NewRotateActionCenter(&pos, vector.NewVector3d(0, math.Pi, 0)))
@@ -70,6 +73,7 @@ func (p *PointShadowMap) VisitPolygonObject(polygon *object.PolygonObject) {
 	p.right.VisitPolygonObject(polygon)
 	p.top.VisitPolygonObject(polygon)
 	p.bottom.VisitPolygonObject(polygon)
+	fmt.Println("Visited polygon")
 }
 
 func (p *PointShadowMap) VisitCamera(cam *object.Camera) {
@@ -88,6 +92,18 @@ func (p *PointShadowMap) PointInShadow(v vector.Vector3d) bool {
 		p.right.PointInShadow(v) ||
 		p.top.PointInShadow(v) ||
 		p.bottom.PointInShadow(v) {
+		return true
+	}
+	return false
+}
+
+func (psm *PointShadowMap) SurfacePointInShadow(p vector.Vector3d, normal vector.Vector3d) bool {
+	if psm.forward.SurfacePointInShadow(p, normal) ||
+		psm.back.SurfacePointInShadow(p, normal) ||
+		psm.left.SurfacePointInShadow(p, normal) ||
+		psm.right.SurfacePointInShadow(p, normal) ||
+		psm.top.SurfacePointInShadow(p, normal) ||
+		psm.bottom.SurfacePointInShadow(p, normal) {
 		return true
 	}
 	return false

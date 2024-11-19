@@ -12,7 +12,7 @@ import (
 )
 
 const NUM_WORKERS_ParallelZmapperWithNormals = 4
-const NUM_LIGHT_WORKERS = 4
+const NUM_LIGHT_WORKERS = 8
 
 type ParallelZmapperWithNormals struct {
 	dbuf   buffers.DepthBuffer
@@ -141,18 +141,17 @@ func (pz *ParallelZmapperWithNormals) ApplyLight(lp *object.LightPool, tolights 
 					toVec := transform.NewMoveAction(vec)
 					tolights.ApplyToVector(vec)
 					fromVec := transform.NewMoveAction(vector.MultiplyVectorScalar(vec, -1))
+
 					normal := dp.Normal
 					toVec.ApplyToVector(&normal)
 					tolights.ApplyToVector(&normal)
 					fromVec.ApplyToVector(&normal)
 					normal.Normalize()
+
 					view := vector.NewVector3d(float64(pz.width)/2, float64(pz.height)/2, 0)
 					tolights.ApplyToVector(view)
+
 					dp.Color = lp.CalculateLight(*vec, *view, normal, dp.Color)
-					// r, _, _, _ := dp.Color.RGBA()
-					// if r < 1000 {
-					// 	fmt.Println(vec, normal)
-					// }
 					pz.updatePoint(dp)
 				}
 			}
