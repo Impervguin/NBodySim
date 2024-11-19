@@ -9,8 +9,10 @@ import (
 	"NBodySim/internal/simulation"
 	"NBodySim/internal/transform"
 	"NBodySim/internal/zmapper/approximator"
+	"NBodySim/internal/zmapper/buffers"
 	"NBodySim/internal/zmapper/mapper"
 	"NBodySim/internal/zmapper/objectdrawer"
+	"fmt"
 	"image/color"
 	"math"
 	"time"
@@ -19,6 +21,8 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 )
+
+const FPS = 20
 
 func main() {
 
@@ -56,14 +60,14 @@ func main() {
 	cube4.Transform(transform.NewMoveAction(vector.NewVector3d(-5, 0, 0)))
 
 	cam := object.NewCamera(
-		*vector.NewVector3d(0, 0, -15),
+		*vector.NewVector3d(0, 0, -30),
 		*vector.NewVector3d(0, 0, 1),
 		*vector.NewVector3d(0, 1, 0),
 		1, 1, 1,
 	)
 
-	light1 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, 0))
-	// light2 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, 10))
+	light1 := object.NewPointLightShadow(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 10, 0))
+	light2 := object.NewPointLightShadow(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(5, 0, 5))
 	// light3 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 0, -15))
 	// light4 := object.NewPointLight(color.RGBA{255, 255, 255, 255}, *vector.NewVector3d(0, 10, -5))
 
@@ -74,7 +78,7 @@ func main() {
 	sim.AddObject(cube3, *vector.NewVector3d(-.02, 0, 0), 1000000000)
 	sim.AddObject(cube4, *vector.NewVector3d(0, 0, .02), 1000000000)
 	sim.AddLight(light1)
-	// sim.AddLight(light2)
+	sim.AddLight(light2)
 	// sim.AddLight(light3)
 	// sim.AddLight(light4)
 	sim.SetDt(0.00001)
@@ -90,20 +94,27 @@ func main() {
 		time.Sleep(time.Second)
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
 		cam.Transform(transform.NewRotateAction(vector.NewVector3d(-math.Pi/4, 0, 0)))
-		drawerfac := objectdrawer.NewParallelPerObjectDrawerFabric(mapper.NewParallelZmapperFabric(int(width), int(height), color.Black), approximator.NewGuroApproximatorFabric())
-		conv := conveyer.NewSimulationConveyer(
+		drawerfac := objectdrawer.NewParallelWithoutLightsDrawerFabric(mapper.NewParallelZmapperWithNormalsFabric(int(width), int(height), color.Black, &buffers.DepthBufferNullFabric{}), approximator.NewFlatNormalApproximatorFabric())
+		conv := conveyer.NewRefactoredSimulationConveyer(
 			drawerfac,
 			sim,
 		)
 		var nraster *canvas.Raster = canvas.NewRasterFromImage(conv.GetImage())
 
 		myWindow.SetContent(nraster)
+		FPStime := time.Second / FPS
+		timeToSleep := FPStime
 		for {
-			time.Sleep(time.Millisecond * 50)
-			sim.UpdateFor(1)
+			time.Sleep(timeToSleep)
+			startTime := time.Now()
+			sim.UpdateFor(FPStime.Seconds())
 			// cam.Transform(transform.NewRotateAction(vector.NewVector3d(0, math.Pi/60, 0)))
 			conv.Convey()
-			myWindow.Content().Refresh()
+			nraster.Refresh()
+			endTime := time.Now()
+			doneIn := endTime.Sub(startTime)
+			fmt.Println(doneIn)
+			timeToSleep = FPStime
 		}
 	}()
 

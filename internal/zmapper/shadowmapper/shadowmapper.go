@@ -9,57 +9,46 @@ import (
 
 type Shadow interface {
 	PointInShadow(p vector.Vector3d) bool
-
+	SurfacePointInShadow(p vector.Vector3d, normal vector.Vector3d) bool
 	object.ObjectVisitor
 }
 
+// Creates a new Shadow
 type ShadowMapper struct {
 	resolution int
-	cam        *object.Camera
-	lights     []object.Light
-	shadows    map[int64]Shadow
+	objs       *object.ObjectPool
 }
 
 func NewShadowMapper(resolution int) *ShadowMapper {
-	return &ShadowMapper{resolution: resolution, lights: make([]object.Light, 0), shadows: make(map[int64]Shadow)}
+	return &ShadowMapper{resolution: resolution, objs: object.NewObjectPool()}
 }
 
-func (sm *ShadowMapper) AddLight(light object.Light) {
-	light.Accept(sm)
+func (sm *ShadowMapper) VisitCamera(camera *object.Camera) {
+
 }
 
-func (sm *ShadowMapper) VisitPointLight(l *object.PointLight) {
-	sm.lights = append(sm.lights, l)
-	sm.shadows[l.GetId()] = shadow.NewPointShadowMap(sm.resolution, l)
+func (sm *ShadowMapper) VisitPolygonObject(po *object.PolygonObject) {
+	sm.objs.PutObject(po.Clone())
 }
 
-func (sm *ShadowMapper) VisitObjectPool(l *object.ObjectPool) {
+func (sm *ShadowMapper) VisitObjectPool(pool *object.ObjectPool) {
 	wg := sync.WaitGroup{}
-	for _, shadow := range sm.shadows {
+	for _, obj := range pool.GetObjects() {
 		wg.Add(1)
-		go func() {
-			l.Accept(shadow)
-			wg.Done()
-		}()
+		go func(obj object.Object) {
+			defer wg.Done()
+			obj.Accept(sm)
+		}(obj)
 	}
 	wg.Wait()
 }
 
-func (sm *ShadowMapper) VisitPolygonObject(po *object.PolygonObject) {
-	for _, shadow := range sm.shadows {
-		po.Accept(shadow)
-	}
+func (sm *ShadowMapper) VisitPointLight(p *object.PointLight) {
+
 }
 
-func (sm *ShadowMapper) VisitCamera(l *object.Camera) {
-	for _, shadow := range sm.shadows {
-		l.Accept(shadow)
-	}
-}
-
-func (sm *ShadowMapper) InShadowBy(id int64, p vector.Vector3d) bool {
-	if shadow, ok := sm.shadows[id]; ok {
-		return shadow.PointInShadow(p)
-	}
-	return false
+func (sm *ShadowMapper) VisitPointLightShadow(p *object.PointLightShadow) {
+	shad := shadow.NewPointShadowMap(sm.resolution, p)
+	sm.objs.Accept(shad)
+	p.SetShadowModel(shad)
 }

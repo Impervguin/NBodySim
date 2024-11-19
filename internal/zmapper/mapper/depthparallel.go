@@ -27,7 +27,7 @@ func NewParallelDepthZmapperFabric(width, height int, background color.Color) *P
 }
 
 func (f *ParallelDepthZmapperFabric) CreateZmapper() Zmapper {
-	return newParallelDepthZmapper(f.width, f.height, f.background, &buffers.DepthBufferNullFabric{})
+	return newParallelDepthZmapper(f.width, f.height, f.background, &buffers.DepthBufferInfFabric{})
 }
 
 func newParallelDepthZmapper(width, height int, background color.Color, df buffers.DepthBufferFabric) *ParallelDepthZmapper {
@@ -51,7 +51,6 @@ func (zm *ParallelDepthZmapper) DrawChannel(ch <-chan approximator.DiscreteFlatP
 		go func() {
 			for dp := range ch {
 				zm.setPoint(dp.X, dp.Y, dp.Z, dp.Color)
-				// fmt.Println(dp.X, dp.Y, dp.Z)
 			}
 		}()
 	}

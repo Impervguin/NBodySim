@@ -8,6 +8,7 @@ type DepthBuffer interface {
 	Reset()
 	PutPoint(x, y int, z float64) (bool, error)
 	GetDepth(x, y int) (float64, error)
+	Empty(x, y int) (bool, error)
 }
 
 type DepthBufferNull struct {
@@ -102,6 +103,20 @@ func (d *DepthBufferNull) GetDepth(x, y int) (float64, error) {
 		return 0, ErrOutOfBounds
 	}
 	return d.buf[y][x], nil
+}
+
+func (d *DepthBufferInf) Empty(x, y int) (bool, error) {
+	if (x < 0 || x >= d.width) || (y < 0 || y >= d.height) {
+		return false, ErrOutOfBounds
+	}
+	return d.buf[y][x] == math.Inf(1), nil
+}
+
+func (d *DepthBufferNull) Empty(x, y int) (bool, error) {
+	if (x < 0 || x >= d.width) || (y < 0 || y >= d.height) {
+		return false, ErrOutOfBounds
+	}
+	return d.buf[y][x] == 0, nil
 }
 
 type DepthBufferFabric interface {

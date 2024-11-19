@@ -11,6 +11,7 @@ import (
 const diffuseCoefficient = 1
 const minimalDistance = 100
 const diffuseDistanceFactor float64 = 1. / minimalDistance
+const ambientCoefficient = 0.15
 
 type PointLight struct {
 	ObjectWithId
@@ -18,11 +19,6 @@ type PointLight struct {
 	intensity color.RGBA64
 	position  vector.Vector3d
 }
-
-// func MirrorVector3d(normal, v vector.Vector3d) vector.Vector3d {
-// 	normal.Normalize()
-
-// }
 
 func NewPointLight(intensity color.Color, position vector.Vector3d) *PointLight {
 	p := &PointLight{
@@ -74,23 +70,38 @@ func (p *PointLight) Transform(action transform.TransformAction) {
 	action.ApplyToVector(&p.position)
 }
 
-func (p *PointLight) CalculateLightContribution(point, view, normal vector.Vector3d, c color.Color) color.Color {
-	// dirToCam := vector.SubtractVectors(&view, &point)
+func (p *PointLight) calculateAmbientPart(distance float64) color.RGBA64 {
+	ambient := ambientCoefficient / ((minimalDistance + distance) * diffuseDistanceFactor)
+	return mathutils.MultRGBA64(p.intensity, ambient)
+}
+
+func (p *PointLight) applyLight(light color.RGBA64, objColor color.Color) color.RGBA64 {
+	r, g, b, a := objColor.RGBA()
+	// t := color.RGBA64{
+	// 	R: uint16(float64(r) * (float64(light.R) / 65535)),
+	// 	G: uint16(float64(g) * (float64(light.G) / 65535)),
+	// 	B: uint16(float64(b) * (float64(light.B) / 65535)),
+	// 	A: uint16(a),
+	// }
+	alt_t := color.RGBA64{
+		R: uint16(r * uint32(light.R) / 65535),
+		G: uint16(g * uint32(light.G) / 65535),
+		B: uint16(b * uint32(light.B) / 65535),
+		A: uint16(a),
+	}
+	return alt_t
+
+}
+func (p *PointLight) CalculateLightContribution(point, view, normal vector.Vector3d, c color.Color) color.RGBA64 {
 	lightVector := vector.SubtractVectors(&p.position, &point)
 	distance := math.Sqrt(lightVector.Square())
 	lightVector.Normalize()
 	diffuse := math.Abs(lightVector.Dot(&normal)*diffuseCoefficient) / ((minimalDistance + distance) * diffuseDistanceFactor)
 	diff := mathutils.MultRGBA64(p.intensity, diffuse)
 
+	amb := p.calculateAmbientPart(distance)
+
 	res := diff
-
-	r, g, b, a := c.RGBA()
-	t := color.RGBA{
-		R: uint8(float64(r>>8) * (float64(res.R) / 65535)),
-		G: uint8(float64(g>>8) * (float64(res.G) / 65535)),
-		B: uint8(float64(b>>8) * (float64(res.B) / 65535)),
-		A: uint8(a >> 8),
-	}
-
-	return t
+	res = mathutils.AddRGBA64(res, amb)
+	return p.applyLight(res, c)
 }

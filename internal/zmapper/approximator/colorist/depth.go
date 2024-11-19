@@ -23,6 +23,9 @@ func (c *DepthColorist) VisitPolygonObject(po *object.PolygonObject) {
 func (c *DepthColorist) VisitPointLight(light *object.PointLight) {
 }
 
+func (c *DepthColorist) VisitPointLightShadow(light *object.PointLightShadow) {
+}
+
 func (c *DepthColorist) VisitCamera(cam *object.Camera) {
 }
 
