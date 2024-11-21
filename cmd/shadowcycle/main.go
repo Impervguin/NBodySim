@@ -92,7 +92,7 @@ func main() {
 	go func() {
 		time.Sleep(time.Second)
 		width, height = float64(width)*float64(myWindow.Canvas().Scale()), float64(height)*float64(myWindow.Canvas().Scale())
-		cam.Transform(transform.NewRotateAction(vector.NewVector3d(-math.Pi/4, 0, 0)))
+		cam.Transform(transform.NewRotateAction(vector.NewVector3d(-math.Pi/3, 0, 0)))
 		drawerfac := objectdrawer.NewParallelWithoutLightsDrawerFabric(mapper.NewParallelZmapperWithNormalsFabric(int(width), int(height), color.Black, &buffers.DepthBufferNullFabric{}), approximator.NewFlatNormalApproximatorFabric())
 		conv := conveyer.NewRefactoredShadowSimulationConveyer(
 			drawerfac,

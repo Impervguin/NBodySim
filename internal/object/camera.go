@@ -52,18 +52,17 @@ func (c *Camera) Accept(visitor ObjectVisitor) {
 }
 
 func (c *Camera) Transform(action transform.TransformAction) {
-	toPosition := transform.NewMoveAction(&c.position)
+	beforePos := c.position.Copy()
 	action.ApplyToVector(&c.position)
-	fromPosition := transform.NewMoveAction(vector.MultiplyVectorScalar(&c.position, -1))
 
-	(*toPosition).ApplyToVector(&c.forward)
+	c.forward.Add(beforePos)
 	action.ApplyToVector(&c.forward)
-	(*fromPosition).ApplyToVector(&c.forward)
+	c.forward.Subtract(&c.position)
 	c.forward.Normalize()
 
-	(*toPosition).ApplyToVector(&c.up)
+	c.up.Add(beforePos)
 	action.ApplyToVector(&c.up)
-	(*fromPosition).ApplyToVector(&c.up)
+	c.up.Subtract(&c.position)
 	c.up.Normalize()
 
 	c.modifiedPerspective = true
@@ -119,4 +118,18 @@ func (c *Camera) GetPerspectiveTransform() *PerspectiveTransform {
 	c.modifiedPerspective = false
 	c.perspective = *NewPerspectiveTransform(c)
 	return &c.perspective
+}
+
+func (c *Camera) GetUp() vector.Vector3d {
+	return c.up
+}
+
+func (c *Camera) GetForward() vector.Vector3d {
+	return c.forward
+}
+
+func (c *Camera) GetRight() vector.Vector3d {
+	right := vector.CrossProduct(&c.forward, &c.up)
+	right.Normalize()
+	return *right
 }

@@ -37,11 +37,13 @@ func DotProduct(v1, v2 *Vector3d) float64 {
 }
 
 func CrossProduct(v1, v2 *Vector3d) *Vector3d {
-	return NewVector3d(
+	vec := NewVector3d(
 		v1.Y*v2.Z-v1.Z*v2.Y,
 		v1.Z*v2.X-v1.X*v2.Z,
 		v1.X*v2.Y-v1.Y*v2.X,
 	)
+	return vec
+
 }
 
 func Length(v *Vector3d) float64 {

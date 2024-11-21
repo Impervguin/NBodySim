@@ -25,7 +25,7 @@ type DepthBufferInf struct {
 
 func newDepthBuffer(width, height int) [][]float64 {
 	buf := make([][]float64, height)
-	for i := 0; i < width; i++ {
+	for i := 0; i < height; i++ {
 		buf[i] = make([]float64, width)
 	}
 	return buf

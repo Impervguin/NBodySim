@@ -1,6 +1,7 @@
 package buffers
 
 import (
+	"fmt"
 	"image/color"
 )
 
@@ -46,8 +47,9 @@ func (s *ScreenBuffer) PutPoint(x, y int, color color.Color) error {
 }
 
 func (s *ScreenBuffer) GetPoint(x, y int) color.Color {
-	// if (x < 0 || x >= s.width) || (y < 0 || y >= s.height) {
-	// 	return s.background
-	// }
+	if (x < 0 || x >= s.width) || (y < 0 || y >= s.height) {
+		fmt.Println(x, y)
+		return s.background
+	}
 	return s.buf[y][x]
 }

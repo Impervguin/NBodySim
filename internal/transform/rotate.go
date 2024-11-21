@@ -48,3 +48,26 @@ func NewRotateActionCenter(center *vector.Vector3d, rotate *vector.Vector3d) *Ro
 
 	return &RotateAction{BaseMatrixTransform: *base}
 }
+
+type AxisRotateAction struct {
+	BaseMatrixTransform
+}
+
+func NewAxisRotateAction(axis *vector.Vector3d, angle float64) *AxisRotateAction {
+	base := NewBaseMatrixTransform()
+
+	cosAngle := math.Cos(angle)
+	sinAngle := math.Sin(angle)
+	cos1 := 1 - cosAngle
+	ux, uy, uz := axis.X, axis.Y, axis.Z
+
+	rot := vector.NewMatrix4d(
+		ux*ux*cos1+cosAngle, ux*uy*cos1+uz*sinAngle, ux*uz*cos1-uy*sinAngle, 0,
+		ux*uy*cos1-uz*sinAngle, uy*uy*cos1+cosAngle, uy*uz*cos1+ux*sinAngle, 0,
+		ux*uz*cos1+uy*sinAngle, uy*uz*cos1-ux*sinAngle, uz*uz*cos1+cosAngle, 0,
+		0, 0, 0, 1,
+	)
+	base.matrix = *base.matrix.Multiply(rot)
+	return &AxisRotateAction{BaseMatrixTransform: *base}
+
+}
