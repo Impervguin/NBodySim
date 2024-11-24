@@ -104,3 +104,16 @@ func (s *Simulation) AddLight(light object.Light) error {
 func (s *Simulation) GetLightsClone() *object.LightPool {
 	return s.lights.Clone()
 }
+
+func (s *Simulation) RemoveObject(id int64) error {
+	_, ok := s.objects.GetObject(id)
+	if !ok {
+		return fmt.Errorf("object with id %d does not exist", id)
+	}
+	err := s.nbody.RemoveBody(id)
+	if err != nil {
+		return err
+	}
+	s.objects.RemoveObject(id)
+	return nil
+}

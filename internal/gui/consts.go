@@ -1,5 +1,10 @@
 package gui
 
+import (
+	"NBodySim/internal/mathutils/vector"
+	"image/color"
+)
+
 // Window
 const InitWindowWidth = 1200
 const InitWindowHeight = 800
@@ -31,3 +36,7 @@ const IcosahedronModelFile = "./models/20_icosahedron.obj"
 
 // Mass
 const MassMultiplier = 10.e9
+
+// light
+var DefaultLightColor = color.White
+var DefaultLightPosition = *vector.NewVector3d(0, -10, 0)

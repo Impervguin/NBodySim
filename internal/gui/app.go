@@ -12,7 +12,10 @@ import (
 	"NBodySim/internal/zmapper/buffers"
 	"NBodySim/internal/zmapper/mapper"
 	"NBodySim/internal/zmapper/objectdrawer"
+	"fmt"
 	"image/color"
+	"strconv"
+	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -36,10 +39,11 @@ type NBodyApp struct {
 	lightConv     conveyer.RefactoredSimulationConveyer
 	lightlessConv conveyer.SimplestSimulationConveyer
 	shadowConv    conveyer.RefactoredShadowSimulationConveyer
-	light         object.Light
+	light         *object.PointLightShadow
 	width         float64
 	height        float64
 
+	chosenModelName string
 	chosenModelFile string
 	modelColor      color.Color
 	modelColorRect  *canvas.Rectangle
@@ -47,6 +51,14 @@ type NBodyApp struct {
 	modelMass       float64
 	modelPosition   vector.Vector3d
 	modelVelocity   vector.Vector3d
+
+	createdObjects map[int64]string
+	objectsSelect  *widget.Select
+	selectedObject string
+
+	lightPosition      vector.Vector3d
+	lightIntensity     color.Color
+	lightIntensityRect *canvas.Rectangle
 }
 
 func NewNBodyApp() *NBodyApp {
@@ -58,38 +70,22 @@ func NewNBodyApp() *NBodyApp {
 
 	win.Resize(fyne.NewSize(float32(width), float32(height)))
 	return &NBodyApp{
-		napp:   app,
-		win:    win,
-		width:  width,
-		height: height,
+		napp:           app,
+		win:            win,
+		width:          width,
+		height:         height,
+		createdObjects: make(map[int64]string),
 	}
 }
 
 func (na *NBodyApp) initSimulation() {
-	read, _ := reader.NewObjReader("./models/6_hexahedron.obj")
-	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
-	cube, err := dir.Construct()
-	if err != nil {
-		panic(err)
-	}
-	cube2, err := dir.Construct()
-	if err != nil {
-		panic(err)
-	}
-
-	cube3, err := dir.Construct()
-	if err != nil {
-		panic(err)
-	}
-	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(5, 0, 0)))
-	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -5)))
-	na.sim.AddObject(cube, *vector.NewVector3d(0, 0, 0), 1)
-	na.sim.AddObject(cube2, *vector.NewVector3d(0, 0, 0), 1)
-	na.sim.AddObject(cube3, *vector.NewVector3d(0, 0, 0), 1)
+	na.createObject()
 	na.cameraMan.MoveCamera(0, 0, -15)
 
-	na.light = object.NewPointLightShadow(color.White, *vector.NewVector3d(0, -10, 0))
+	na.light = object.NewPointLightShadow(color.White, *vector.NewVector3d(0, 0, 0))
 	na.sim.AddLight(na.light)
+	na.updateLight()
+	na.updateCanvas()
 }
 
 func (na *NBodyApp) updateCanvas() {
@@ -126,12 +122,19 @@ func (na *NBodyApp) chooseModel(model string) {
 	case IcosahedronModelButton:
 		na.chosenModelFile = IcosahedronModelFile
 	}
+	na.chosenModelName = model
 }
 
 func (na *NBodyApp) setModelColor(c color.Color) {
 	na.modelColor = c
 	na.modelColorRect.FillColor = na.modelColor
 	na.modelColorRect.Refresh()
+}
+
+func (na *NBodyApp) setLightColor(c color.Color) {
+	na.lightIntensity = c
+	na.lightIntensityRect.FillColor = na.lightIntensity
+	na.lightIntensityRect.Refresh()
 }
 
 func (na *NBodyApp) createObject() {
@@ -146,6 +149,46 @@ func (na *NBodyApp) createObject() {
 	obj.Transform(transform.NewScaleAction(vector.NewVector3d(na.modelSize, na.modelSize, na.modelSize)))
 	obj.Transform(transform.NewMoveAction(&na.modelPosition))
 	na.sim.AddObject(obj, na.modelVelocity, na.modelMass*MassMultiplier)
+
+	na.createdObjects[obj.GetId()] = na.chosenModelName
+	na.updateObjectSelect()
+
+	na.updateCanvas()
+}
+
+func (na *NBodyApp) deleteObject() {
+	objString := na.selectedObject
+	if objString == "" {
+		dialog.NewError(fmt.Errorf("Не выбран объект"), na.win).Show()
+		return
+	}
+	objId, err := strconv.ParseInt(strings.Split(objString, ":")[0], 10, 64)
+	if err != nil {
+		dialog.NewError(err, na.win).Show()
+		return
+	}
+	err = na.sim.RemoveObject(objId)
+	if err != nil {
+		dialog.NewError(err, na.win).Show()
+		return
+	}
+	delete(na.createdObjects, objId)
+	na.updateObjectSelect()
+	na.objectsSelect.ClearSelected()
+	na.updateCanvas()
+}
+
+func (na *NBodyApp) updateObjectSelect() {
+	options := make([]string, 0, len(na.createdObjects))
+	for id, name := range na.createdObjects {
+		options = append(options, fmt.Sprintf("%d: %s", id, name))
+	}
+	na.objectsSelect.SetOptions(options)
+}
+
+func (na *NBodyApp) updateLight() {
+	na.light.SetIntensity(na.lightIntensity)
+	na.light.SetPosition(na.lightPosition)
 	na.updateCanvas()
 }
 
@@ -177,7 +220,6 @@ func (na *NBodyApp) createLayout() {
 		),
 		&na.sim,
 	)
-	na.initSimulation()
 
 	/*
 		Канвас
@@ -281,6 +323,13 @@ func (na *NBodyApp) createLayout() {
 	createObjectButton := widget.NewButton("Создать объект", na.createObject)
 	createObjectButtonBox := container.NewHBox(layout.NewSpacer(), createObjectButton, layout.NewSpacer())
 
+	na.objectsSelect = widget.NewSelect([]string{}, func(s string) {
+		na.selectedObject = s
+	})
+
+	deleteObjectButton := widget.NewButton("Удалить выбранный объект", na.deleteObject)
+	deleteObjectButtonBox := container.NewHBox(layout.NewSpacer(), deleteObjectButton, layout.NewSpacer())
+
 	objectTabContainer := container.NewVBox(
 		container.NewHBox(layout.NewSpacer(), widget.NewLabel("Визуальные характеристики"), layout.NewSpacer()),
 		modelRadioBox,
@@ -293,14 +342,54 @@ func (na *NBodyApp) createLayout() {
 		container.NewHBox(layout.NewSpacer(), widget.NewLabel("Скорость объекта"), layout.NewSpacer()),
 		velocityInputBox,
 		createObjectButtonBox,
+		container.NewHBox(layout.NewSpacer(), widget.NewLabel("Удаление объектов"), layout.NewSpacer()),
+		na.objectsSelect,
+		deleteObjectButtonBox,
+	)
+
+	/*
+	   Таб управления светом
+	*/
+
+	xLightPosInput := widget.NewEntryWithData(binding.FloatToString(binding.BindFloat(&na.lightPosition.X)))
+	yLightPosInput := widget.NewEntryWithData(binding.FloatToString(binding.BindFloat(&na.lightPosition.Y)))
+	zLightPosInput := widget.NewEntryWithData(binding.FloatToString(binding.BindFloat(&na.lightPosition.Z)))
+	xLightPosInput.SetText(strconv.FormatFloat(DefaultLightPosition.X, 'f', 2, 64))
+	yLightPosInput.SetText(strconv.FormatFloat(DefaultLightPosition.Y, 'f', 2, 64))
+	zLightPosInput.SetText(strconv.FormatFloat(DefaultLightPosition.Z, 'f', 2, 64))
+	lightPositionInputBox := container.NewGridWithColumns(3,
+		container.NewBorder(nil, nil, widget.NewLabel("X:"), nil, xLightPosInput),
+		container.NewBorder(nil, nil, widget.NewLabel("Y:"), nil, yLightPosInput),
+		container.NewBorder(nil, nil, widget.NewLabel("Z:"), nil, zLightPosInput),
+	)
+
+	na.lightIntensityRect = canvas.NewRectangle(DefaultLightColor)
+	na.lightIntensity = DefaultLightColor
+
+	lightColorPickButton := container.NewStack(widget.NewButton("", func() {
+		dialog.NewColorPicker("Цвет освещения", "Выберете цвет света", na.setLightColor, na.win).Show()
+	}), na.lightIntensityRect)
+	lightColorPick := container.NewHBox(widget.NewLabel("Цвет освещения:"), lightColorPickButton, layout.NewSpacer())
+
+	lightUpdateButton := widget.NewButton("Обновить освещение", func() { na.updateLight() })
+	lightUpdateButtonBox := container.NewHBox(layout.NewSpacer(), lightUpdateButton, layout.NewSpacer())
+
+	lightTabContainer := container.NewVBox(
+		container.NewHBox(layout.NewSpacer(), widget.NewLabel("Интенсивность источника света"), layout.NewSpacer()),
+		lightColorPick,
+		container.NewHBox(layout.NewSpacer(), widget.NewLabel("Позиция источника света"), layout.NewSpacer()),
+		lightPositionInputBox,
+		lightUpdateButtonBox,
 	)
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Сцена", sceneTabContainer),
 		container.NewTabItem("Объекты", objectTabContainer),
+		container.NewTabItem("Освещение", lightTabContainer),
 	)
 	outerlayout := container.NewBorder(nil, nil, na.canvasBox, nil, tabs)
 	na.win.SetContent(outerlayout)
+	na.initSimulation()
 }
 
 func (na *NBodyApp) StartApp() {
