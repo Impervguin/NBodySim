@@ -48,7 +48,7 @@ func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
 
-	shadowCreator := shadowmapper.NewShadowMapper(256)
+	shadowCreator := shadowmapper.NewShadowMapper(512)
 	objs.Accept(shadowCreator)
 	lights.Accept(shadowCreator)
 

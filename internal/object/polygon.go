@@ -39,6 +39,10 @@ func (p *Polygon) GetColor() color.Color {
 	return p.color
 }
 
+func (p *Polygon) SetColor(color color.Color) {
+	p.color = color
+}
+
 func (p *Polygon) calculateNormal() *vector.Vector3d {
 	v1 := vector.SubtractVectors(p.v2, p.v1)
 	v2 := vector.SubtractVectors(p.v3, p.v1)

@@ -47,11 +47,6 @@ func (sc *RefactoredSimulationConveyer) Convey() error {
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
 
-	// tobj, _ := objs.GetObject(1)
-	// pobj, _ := tobj.(*object.PolygonObject)
-
-	// norm := pobj.GetPolygons()[0].Clone()
-
 	objs.Transform(persp)
 	objs.Transform(canvas)
 	objs.Transform(move)
@@ -67,34 +62,6 @@ func (sc *RefactoredSimulationConveyer) Convey() error {
 	canvasBack.ApplyAfter(revpersp)
 
 	mapper.ApplyLight(lights, moveBack)
-
-	// fmt.Println(norm.GetNormal())
-	// norm.TransformNormal(persp)
-	// norm.TransformNormal(canvas)
-	// norm.TransformNormal(move)
-	// norm.TransformNormal(moveBack)
-	// fmt.Println(norm.GetNormal())
-	// os.Exit(1)
-
-	// p := vector.NewVector3d(0, 0, 5)
-	// view.ApplyToVector(p)
-	// fmt.Println(p)
-	// persp.ApplyToVector(p)
-	// canvas.ApplyToVector(p)
-	// move.ApplyToVector(p)
-	// moveBack.ApplyToVector(p)
-	// // fmt.Println(p)
-	// var l object.Light
-	// var b bool
-	// for id := 0; true; id++ {
-	// 	l, b = lights.GetLight(int64(id))
-	// 	if b {
-	// 		break
-	// 	}
-	// }
-
-	// lc := l.GetCenter()
-	// fmt.Println(vector.SubtractVectors(&lc, p))
 
 	return nil
 }

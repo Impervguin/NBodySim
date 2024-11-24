@@ -104,6 +104,5 @@ func (m *ShadowMap) SurfacePointInShadow(p vector.Vector3d, normal vector.Vector
 	}
 
 	bias := math.Max(MaxBias*(1-biasCoeff), MinBias)
-	// bias := SimpleBias * math.Tan(math.Acos(biasCoeff))
-	return ap.Z > p.Z-bias
+	return ap.Z > p.Z+bias
 }

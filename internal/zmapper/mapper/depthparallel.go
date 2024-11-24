@@ -27,7 +27,7 @@ func NewParallelDepthZmapperFabric(width, height int, background color.Color) *P
 }
 
 func (f *ParallelDepthZmapperFabric) CreateZmapper() Zmapper {
-	return newParallelDepthZmapper(f.width, f.height, f.background, &buffers.DepthBufferInfFabric{})
+	return newParallelDepthZmapper(f.width, f.height, f.background, &buffers.DepthBufferNullFabric{})
 }
 
 func newParallelDepthZmapper(width, height int, background color.Color, df buffers.DepthBufferFabric) *ParallelDepthZmapper {
