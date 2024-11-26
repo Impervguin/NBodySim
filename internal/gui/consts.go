@@ -40,3 +40,4 @@ const MassMultiplier = 10.e9
 // light
 var DefaultLightColor = color.White
 var DefaultLightPosition = *vector.NewVector3d(0, -10, 0)
+var LightObjectScale = 0.1

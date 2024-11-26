@@ -35,6 +35,7 @@ func NewPolygonObject(vertices []*vector.Vector3d, polygons []*Polygon, center v
 	}
 	for _, polygon := range polygons {
 		po.AddPolygon(polygon)
+
 	}
 	return po
 }
@@ -134,4 +135,10 @@ func (po *PolygonObject) PrintPolygons() {
 
 func (po *PolygonObject) Accept(visitor ObjectVisitor) {
 	visitor.VisitPolygonObject(po)
+}
+
+func (po *PolygonObject) MoveCenterTo(pos vector.Vector3d) {
+	diff := vector.SubtractVectors(&pos, &po.center)
+	po.Transform(transform.NewMoveAction(diff))
+	po.center = pos
 }

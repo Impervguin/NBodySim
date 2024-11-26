@@ -29,6 +29,7 @@ func (sc *RefactoredSimulationConveyer) GetImage() image.Image {
 func (sc *RefactoredSimulationConveyer) Convey() error {
 	sc.drawer.ResetImage()
 
+	imobjs := sc.sim.GetImaginaryObjectsClone()
 	objs := sc.sim.GetObjectsClone()
 	lights := sc.sim.GetLightsClone()
 	camo := sc.sim.GetCamera().Clone()
@@ -36,9 +37,11 @@ func (sc *RefactoredSimulationConveyer) Convey() error {
 
 	view := object.NewCameraViewAction(cam)
 
+	imobjs.Transform(view)
 	objs.Transform(view)
 	cam.Transform(view)
 	lights.Transform(view)
+
 	persp := object.NewPerspectiveTransform(cam)
 	canvas := transform.NewViewportToCanvas(float64(sc.drawer.GetWidth()), float64(sc.drawer.GetHeight()))
 	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
@@ -46,6 +49,11 @@ func (sc *RefactoredSimulationConveyer) Convey() error {
 
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
+	imobjs.Accept(cut)
+
+	imobjs.Transform(persp)
+	imobjs.Transform(canvas)
+	imobjs.Transform(move)
 
 	objs.Transform(persp)
 	objs.Transform(canvas)
@@ -62,6 +70,7 @@ func (sc *RefactoredSimulationConveyer) Convey() error {
 	canvasBack.ApplyAfter(revpersp)
 
 	mapper.ApplyLight(lights, moveBack)
+	imobjs.Accept(sc.drawer)
 
 	return nil
 }

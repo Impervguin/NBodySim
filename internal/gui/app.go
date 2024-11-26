@@ -40,6 +40,7 @@ type NBodyApp struct {
 	lightlessConv conveyer.SimplestSimulationConveyer
 	shadowConv    conveyer.RefactoredShadowSimulationConveyer
 	light         *object.PointLightShadow
+	lightObject   *object.PolygonObject
 	width         float64
 	height        float64
 
@@ -84,8 +85,23 @@ func (na *NBodyApp) initSimulation() {
 
 	na.light = object.NewPointLightShadow(color.White, *vector.NewVector3d(0, 0, 0))
 	na.sim.AddLight(na.light)
+
+	// na.lightObject = object.NewPolygonObject()
+	read, err := reader.NewObjReader(TetraedrModelFile)
+	if err != nil {
+		panic(err)
+	}
+	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
+	obj, err := dir.Construct()
+	if err != nil {
+		panic(err)
+	}
+
+	obj.Transform(transform.NewScaleAction(vector.NewVector3d(LightObjectScale, LightObjectScale, LightObjectScale)))
+	na.lightObject = obj.(*object.PolygonObject)
+	na.sim.AddImaginaryObject(obj)
+
 	na.updateLight()
-	na.updateCanvas()
 }
 
 func (na *NBodyApp) updateCanvas() {
@@ -138,11 +154,16 @@ func (na *NBodyApp) setLightColor(c color.Color) {
 }
 
 func (na *NBodyApp) createObject() {
-	read, _ := reader.NewObjReader(na.chosenModelFile)
+	read, err := reader.NewObjReader(na.chosenModelFile)
+	if err != nil {
+		dialog.NewError(err, na.win).Show()
+		return
+	}
 	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
 	obj, err := dir.Construct()
 	if err != nil {
 		dialog.NewError(err, na.win).Show()
+		return
 	}
 	pobj, _ := obj.(*object.PolygonObject)
 	pobj.SetColor(na.modelColor)
@@ -187,8 +208,11 @@ func (na *NBodyApp) updateObjectSelect() {
 }
 
 func (na *NBodyApp) updateLight() {
+	na.lightObject.SetColor(na.lightIntensity)
+	na.lightObject.MoveCenterTo(na.lightPosition)
 	na.light.SetIntensity(na.lightIntensity)
 	na.light.SetPosition(na.lightPosition)
+
 	na.updateCanvas()
 }
 
