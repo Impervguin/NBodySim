@@ -3,6 +3,7 @@ package gui
 import (
 	"NBodySim/internal/mathutils/vector"
 	"image/color"
+	"time"
 )
 
 // Window
@@ -40,4 +41,9 @@ const MassMultiplier = 10.e9
 // light
 var DefaultLightColor = color.White
 var DefaultLightPosition = *vector.NewVector3d(0, -10, 0)
-var LightObjectScale = 0.1
+
+const LightObjectScale = 0.1
+
+// Animation
+const ScreenDrawWait = time.Millisecond * 34
+const SimulationTimePerFrame = time.Millisecond * 34

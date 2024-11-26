@@ -4,7 +4,6 @@ import (
 	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/zmapper/shadow"
-	"sync"
 )
 
 type Shadow interface {
@@ -32,15 +31,7 @@ func (sm *ShadowMapper) VisitPolygonObject(po *object.PolygonObject) {
 }
 
 func (sm *ShadowMapper) VisitObjectPool(pool *object.ObjectPool) {
-	wg := sync.WaitGroup{}
-	for _, obj := range pool.GetObjects() {
-		wg.Add(1)
-		go func(obj object.Object) {
-			defer wg.Done()
-			obj.Accept(sm)
-		}(obj)
-	}
-	wg.Wait()
+	sm.objs = pool
 }
 
 func (sm *ShadowMapper) VisitPointLight(p *object.PointLight) {

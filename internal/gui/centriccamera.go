@@ -8,7 +8,8 @@ import (
 )
 
 type CentricCameraManager struct {
-	camera *object.Camera
+	camera             *object.Camera
+	distanceFromCenter float64
 }
 
 func NewCentricCameraManager(cam *object.Camera) *CentricCameraManager {
@@ -26,8 +27,13 @@ func (m *CentricCameraManager) GetCamera() *object.Camera {
 }
 
 func (m *CentricCameraManager) MoveCamera(_, _, dz float64) {
+	moveDistance := dz
+	if m.distanceFromCenter-dz < 0.01 {
+		moveDistance = m.distanceFromCenter - 0.01
+	}
+	m.distanceFromCenter -= moveDistance
 	forward := m.camera.GetForward()
-	m.camera.Transform(transform.NewMoveAction(vector.MultiplyVectorScalar(&forward, dz)))
+	m.camera.Transform(transform.NewMoveAction(vector.MultiplyVectorScalar(&forward, moveDistance)))
 }
 
 func (m *CentricCameraManager) RotateUp(angle float64) {
@@ -38,7 +44,6 @@ func (m *CentricCameraManager) RotateUp(angle float64) {
 
 func (m *CentricCameraManager) RotateRight(angle float64) {
 	angle = mathutils.ToRadians(angle)
-	// up := m.camera.GetUp()
 	up := vector.NewVector3d(0, 1, 0)
 	m.camera.Transform(transform.NewAxisRotateAction(up, angle))
 }

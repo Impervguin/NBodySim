@@ -12,6 +12,7 @@ import (
 	"NBodySim/internal/zmapper/buffers"
 	"NBodySim/internal/zmapper/mapper"
 	"NBodySim/internal/zmapper/objectdrawer"
+	"context"
 	"fmt"
 	"image/color"
 	"strconv"
@@ -60,6 +61,16 @@ type NBodyApp struct {
 	lightPosition      vector.Vector3d
 	lightIntensity     color.Color
 	lightIntensityRect *canvas.Rectangle
+
+	simulationContext context.Context
+	simulationCancel  context.CancelFunc
+
+	tabs      *container.AppTabs
+	objectTab *container.TabItem
+	lightTab  *container.TabItem
+
+	startButton *widget.Button
+	stopButton  *widget.Button
 }
 
 func NewNBodyApp() *NBodyApp {
@@ -122,7 +133,10 @@ func (na *NBodyApp) changeConveyer(value string) {
 	na.canvas.SetMinSize(fyne.NewSize(CanvasWidth, CanvasHeight))
 	na.canvasBox.RemoveAll()
 	na.canvasBox.Add(na.canvas)
-	na.updateCanvas()
+
+	if na.simulationContext.Err() != nil {
+		na.updateCanvas()
+	}
 }
 
 func (na *NBodyApp) chooseModel(model string) {
@@ -216,6 +230,48 @@ func (na *NBodyApp) updateLight() {
 	na.updateCanvas()
 }
 
+func (na *NBodyApp) cameraRotateUp() {
+	na.cameraMan.RotateUp(CameraRotateAngle)
+	if na.simulationContext.Err() != nil {
+		na.updateCanvas()
+	}
+}
+
+func (na *NBodyApp) cameraRotateDown() {
+	na.cameraMan.RotateUp(-CameraRotateAngle)
+	if na.simulationContext.Err() != nil {
+		na.updateCanvas()
+	}
+}
+
+func (na *NBodyApp) cameraRotateLeft() {
+	na.cameraMan.RotateRight(-CameraRotateAngle)
+	if na.simulationContext.Err() != nil {
+		na.updateCanvas()
+	}
+}
+
+func (na *NBodyApp) cameraRotateRight() {
+	na.cameraMan.RotateRight(CameraRotateAngle)
+	if na.simulationContext.Err() != nil {
+		na.updateCanvas()
+	}
+}
+
+func (na *NBodyApp) cameraMoveForward() {
+	na.cameraMan.MoveCamera(0, 0, ZoomCameraLength)
+	if na.simulationContext.Err() != nil {
+		na.updateCanvas()
+	}
+}
+
+func (na *NBodyApp) cameraMoveBack() {
+	na.cameraMan.MoveCamera(0, 0, -ZoomCameraLength)
+	if na.simulationContext.Err() != nil {
+		na.updateCanvas()
+	}
+}
+
 func (na *NBodyApp) createLayout() {
 	time.Sleep(time.Second)
 	na.width, na.height = float64(na.width)*float64(na.win.Canvas().Scale()), float64(na.height)*float64(na.win.Canvas().Scale())
@@ -254,17 +310,20 @@ func (na *NBodyApp) createLayout() {
 	   Таб сцены
 	*/
 
-	startButton := widget.NewButton("Запустить", func() {})
-	stopButton := widget.NewButton("Остановить", func() {})
+	startButton := widget.NewButton("Запустить", func() { na.StartSimulation() })
+	na.startButton = startButton
+	stopButton := widget.NewButton("Остановить", func() { na.StopSimulation() })
+	na.stopButton = stopButton
+	na.stopButton.Disable()
 	simControls := container.NewHBox(layout.NewSpacer(), startButton, layout.NewSpacer(), stopButton, layout.NewSpacer())
 
-	leftButton := widget.NewButton("<-", func() { na.cameraMan.RotateRight(-CameraRotateAngle); na.updateCanvas() })
-	rightButton := widget.NewButton("->", func() { na.cameraMan.RotateRight(CameraRotateAngle); na.updateCanvas() })
-	upButton := widget.NewButton("^", func() { na.cameraMan.RotateUp(CameraRotateAngle); na.updateCanvas() })
-	downButton := widget.NewButton("v", func() { na.cameraMan.RotateUp(-CameraRotateAngle); na.updateCanvas() })
+	leftButton := widget.NewButton("<-", na.cameraRotateLeft)
+	rightButton := widget.NewButton("->", na.cameraRotateRight)
+	upButton := widget.NewButton("^", na.cameraRotateUp)
+	downButton := widget.NewButton("v", na.cameraRotateDown)
 
-	zoomFarButton := widget.NewButton("Дальше", func() { na.cameraMan.MoveCamera(0, 0, -ZoomCameraLength); na.updateCanvas() })
-	zoomNearButton := widget.NewButton("Ближе", func() { na.cameraMan.MoveCamera(0, 0, ZoomCameraLength); na.updateCanvas() })
+	zoomFarButton := widget.NewButton("Дальше", na.cameraMoveBack)
+	zoomNearButton := widget.NewButton("Ближе", na.cameraMoveForward)
 	cameraControls := container.NewVBox(
 		container.NewHBox(layout.NewSpacer(), widget.NewLabel("Управление камерой"), layout.NewSpacer()),
 		container.NewHBox(
@@ -406,17 +465,53 @@ func (na *NBodyApp) createLayout() {
 		lightUpdateButtonBox,
 	)
 
+	na.objectTab = container.NewTabItem("Объекты", objectTabContainer)
+	na.lightTab = container.NewTabItem("Освещение", lightTabContainer)
+
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Сцена", sceneTabContainer),
-		container.NewTabItem("Объекты", objectTabContainer),
-		container.NewTabItem("Освещение", lightTabContainer),
+		na.objectTab,
+		na.lightTab,
 	)
+	na.tabs = tabs
 	outerlayout := container.NewBorder(nil, nil, na.canvasBox, nil, tabs)
 	na.win.SetContent(outerlayout)
 	na.initSimulation()
 }
 
+func (na *NBodyApp) StartSimulation() {
+	na.simulationContext, na.simulationCancel = context.WithCancel(context.Background())
+	na.tabs.DisableItem(na.objectTab)
+	na.tabs.DisableItem(na.lightTab)
+	na.startButton.Disable()
+	na.stopButton.Enable()
+	go func() {
+		fmt.Println("Started")
+		for {
+			select {
+			case <-na.simulationContext.Done():
+				fmt.Println("Stopped")
+				return
+			default:
+				na.sim.UpdateFor(float64(SimulationTimePerFrame) / float64(time.Second))
+				na.updateCanvas()
+				time.Sleep(ScreenDrawWait)
+			}
+		}
+	}()
+}
+
+func (na *NBodyApp) StopSimulation() {
+	na.simulationCancel()
+	na.tabs.EnableItem(na.objectTab)
+	na.tabs.EnableItem(na.lightTab)
+	na.startButton.Enable()
+	na.stopButton.Disable()
+}
+
 func (na *NBodyApp) StartApp() {
+	na.simulationContext, na.simulationCancel = context.WithCancel(context.Background())
+	na.simulationCancel()
 	go na.createLayout()
 	na.win.ShowAndRun()
 }
