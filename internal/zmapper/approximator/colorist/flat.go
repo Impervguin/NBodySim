@@ -22,14 +22,14 @@ func NewFlatColorist() *FlatColorist {
 
 func (c *FlatColorist) VisitPolygonObject(po *object.PolygonObject) {
 	for _, p := range po.GetPolygons() {
-		normal := p.GetNormal()
+		normal := p.GetNormal().ToVector()
 		pcolor := p.GetColor()
 		color := FlatColorModel{
 			C: color.RGBA{0, 0, 0, 255},
 		}
 		for _, l := range c.lights {
 			v1, _, _ := p.GetVertices()
-			lcolor := l.CalculateLightContribution(*v1, c.view, *normal, pcolor)
+			lcolor := l.CalculateLightContribution(*v1, c.view, normal, pcolor)
 			color.C = mathutils.AddRGBA(color.C, lcolor)
 		}
 		p.SetColorModel(&color)
