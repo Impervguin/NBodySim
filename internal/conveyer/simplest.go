@@ -29,12 +29,14 @@ func (sc *SimplestSimulationConveyer) GetImage() image.Image {
 func (sc *SimplestSimulationConveyer) Convey() error {
 	sc.drawer.ResetImage()
 
+	imobjs := sc.sim.GetImaginaryObjectsClone()
 	objs := sc.sim.GetObjectsClone()
 	camo := sc.sim.GetCamera().Clone()
 	cam, _ := camo.(*object.Camera)
 
 	view := object.NewCameraViewAction(cam)
 
+	imobjs.Transform(view)
 	objs.Transform(view)
 	cam.Transform(view)
 
@@ -47,11 +49,15 @@ func (sc *SimplestSimulationConveyer) Convey() error {
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
 
+	imobjs.Transform(persp)
+	imobjs.Transform(canvas)
+	imobjs.Transform(move)
 	objs.Transform(persp)
 	objs.Transform(canvas)
 	objs.Transform(move)
 
 	objs.Accept(sc.drawer)
+	imobjs.Accept(sc.drawer)
 
 	return nil
 }
