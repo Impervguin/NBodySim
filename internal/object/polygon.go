@@ -2,8 +2,23 @@ package object
 
 import (
 	"NBodySim/internal/mathutils/vector"
+	"NBodySim/internal/transform"
 	"image/color"
 )
+
+// start con be moved only in linear space, not in perspective space
+type PolygonNormal struct {
+	Start, End vector.Vector3d
+}
+
+func (pn *PolygonNormal) ToVector() vector.Vector3d {
+	return *vector.SubtractVectors(&pn.End, &pn.Start)
+}
+
+func (pn *PolygonNormal) Transform(transform transform.TransformAction) {
+	transform.ApplyToVector(&pn.Start)
+	transform.ApplyToVector(&pn.End)
+}
 
 type PolygonColorModel interface{}
 
@@ -39,6 +54,10 @@ func (p *Polygon) GetColor() color.Color {
 	return p.color
 }
 
+func (p *Polygon) SetColor(color color.Color) {
+	p.color = color
+}
+
 func (p *Polygon) calculateNormal() *vector.Vector3d {
 	v1 := vector.SubtractVectors(p.v2, p.v1)
 	v2 := vector.SubtractVectors(p.v3, p.v1)
@@ -47,10 +66,8 @@ func (p *Polygon) calculateNormal() *vector.Vector3d {
 	return n
 }
 
-func (p *Polygon) GetNormal() *vector.Vector3d {
-	n := vector.SubtractVectors(p.normalv1, p.v1)
-	n.Normalize()
-	return n
+func (p *Polygon) GetNormal() *PolygonNormal {
+	return &PolygonNormal{Start: *p.v1, End: *p.normalv1}
 }
 
 func (p *Polygon) Transform(t TransformAction) {
@@ -62,6 +79,7 @@ func (p *Polygon) Transform(t TransformAction) {
 
 func (p *Polygon) TransformNormal(t TransformAction) {
 	t.ApplyToVector(p.normalv1)
+	// fmt.Println(p.v1, p.normalv1)
 }
 
 func (p *Polygon) Clone() *Polygon {

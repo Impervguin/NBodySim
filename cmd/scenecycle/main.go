@@ -107,7 +107,7 @@ func main() {
 		for {
 			time.Sleep(timeToSleep)
 			startTime := time.Now()
-			sim.UpdateFor(FPStime.Seconds())
+			sim.UpdateFor(1)
 			// cam.Transform(transform.NewRotateAction(vector.NewVector3d(0, math.Pi/60, 0)))
 			conv.Convey()
 			nraster.Refresh()

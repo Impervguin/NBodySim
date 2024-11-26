@@ -47,7 +47,7 @@ func newParallelZmapperWithNormals(width, height int, background color.Color, df
 		width:  width,
 		height: height,
 		sbuf:   *buffers.NewScreenBuffer(width, height, background),
-		nbuf:   *buffers.NewNormalBuffer(width, height, *vector.NewVector3d(0, 0, 0)),
+		nbuf:   *buffers.NewNormalBuffer(width, height, object.PolygonNormal{}),
 		dbuf:   df.CreateDepthBuffer(width, height),
 		sync:   *buffers.NewSyncBuffer(width, height),
 	}
@@ -138,20 +138,16 @@ func (pz *ParallelZmapperWithNormals) ApplyLight(lp *object.LightPool, tolights 
 					}
 					dp := pz.GetPoint(x, y)
 					vec := vector.NewVector3d(float64(dp.X), float64(dp.Y), dp.Z)
-					toVec := transform.NewMoveAction(vec)
 					tolights.ApplyToVector(vec)
-					fromVec := transform.NewMoveAction(vector.MultiplyVectorScalar(vec, -1))
-
 					normal := dp.Normal
-					toVec.ApplyToVector(&normal)
-					tolights.ApplyToVector(&normal)
-					fromVec.ApplyToVector(&normal)
-					normal.Normalize()
+					normal.Transform(tolights)
+					nvec := normal.ToVector()
+					nvec.Normalize()
 
 					view := vector.NewVector3d(float64(pz.width)/2, float64(pz.height)/2, 0)
 					tolights.ApplyToVector(view)
 
-					dp.Color = lp.CalculateLight(*vec, *view, normal, dp.Color)
+					dp.Color = lp.CalculateLight(*vec, *view, nvec, dp.Color)
 					pz.updatePoint(dp)
 				}
 			}

@@ -8,12 +8,13 @@ import (
 )
 
 type Simulation struct {
-	objects    object.ObjectPool
-	nbody      nbody.NBody
-	camera     *object.Camera
-	lights     object.LightPool
-	dt         float64
-	timeMoment float64
+	objects          object.ObjectPool
+	imaginaryObjects object.ObjectPool
+	nbody            nbody.NBody
+	camera           *object.Camera
+	lights           object.LightPool
+	dt               float64
+	timeMoment       float64
 }
 
 func NewSimulation() *Simulation {
@@ -27,6 +28,7 @@ func (s *Simulation) init() {
 	s.dt = 0.01
 	s.timeMoment = 0
 	s.objects = *object.NewObjectPool()
+	s.imaginaryObjects = *object.NewObjectPool()
 	s.lights = *object.NewLightPool()
 	s.camera = object.NewCamera(*vector.NewVector3d(0, 0, 0), *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, 1, 0), 1, 1, 1)
 }
@@ -103,4 +105,38 @@ func (s *Simulation) AddLight(light object.Light) error {
 
 func (s *Simulation) GetLightsClone() *object.LightPool {
 	return s.lights.Clone()
+}
+
+func (s *Simulation) RemoveObject(id int64) error {
+	_, ok := s.objects.GetObject(id)
+	if !ok {
+		return fmt.Errorf("object with id %d does not exist", id)
+	}
+	err := s.nbody.RemoveBody(id)
+	if err != nil {
+		return err
+	}
+	s.objects.RemoveObject(id)
+	return nil
+}
+
+func (s *Simulation) AddImaginaryObject(obj object.Object) error {
+	if _, ok := s.imaginaryObjects.GetObject(obj.GetId()); ok {
+		return fmt.Errorf("object with id %d already exists", obj.GetId())
+	}
+	s.imaginaryObjects.PutObject(obj)
+	return nil
+}
+
+func (s *Simulation) GetImaginaryObjectsClone() *object.ObjectPool {
+	return s.imaginaryObjects.Clone()
+}
+
+func (s *Simulation) RemoveImaginaryObject(objId int64) error {
+	_, ok := s.imaginaryObjects.GetObject(objId)
+	if !ok {
+		return fmt.Errorf("object with id %d does not exist", objId)
+	}
+	s.imaginaryObjects.RemoveObject(objId)
+	return nil
 }

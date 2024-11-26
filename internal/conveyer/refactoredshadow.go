@@ -30,6 +30,7 @@ func (sc *RefactoredShadowSimulationConveyer) GetImage() image.Image {
 func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 	sc.drawer.ResetImage()
 
+	imobjs := sc.sim.GetImaginaryObjectsClone()
 	objs := sc.sim.GetObjectsClone()
 	lights := sc.sim.GetLightsClone()
 	camo := sc.sim.GetCamera().Clone()
@@ -37,6 +38,7 @@ func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 
 	view := object.NewCameraViewAction(cam)
 
+	imobjs.Transform(view)
 	objs.Transform(view)
 	cam.Transform(view)
 	lights.Transform(view)
@@ -48,10 +50,13 @@ func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
 
-	shadowCreator := shadowmapper.NewShadowMapper(256)
+	shadowCreator := shadowmapper.NewShadowMapper(512)
 	objs.Accept(shadowCreator)
 	lights.Accept(shadowCreator)
 
+	imobjs.Transform(persp)
+	imobjs.Transform(canvas)
+	imobjs.Transform(move)
 	objs.Transform(persp)
 	objs.Transform(canvas)
 	objs.Transform(move)
@@ -67,6 +72,7 @@ func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 	canvasBack.ApplyAfter(revpersp)
 
 	mapper.ApplyLight(lights, moveBack)
+	imobjs.Accept(sc.drawer)
 
 	return nil
 }

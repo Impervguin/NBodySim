@@ -5,6 +5,7 @@ import (
 	"NBodySim/internal/transform"
 	"container/list"
 	"fmt"
+	"image/color"
 )
 
 type PolygonObject struct {
@@ -13,6 +14,13 @@ type PolygonObject struct {
 	vertices *list.List
 	polygons *list.List
 	center   vector.Vector3d
+}
+
+func (po *PolygonObject) SetColor(c color.Color) {
+	for e := po.polygons.Front(); e != nil; e = e.Next() {
+		polygon := e.Value.(*Polygon)
+		polygon.SetColor(c)
+	}
 }
 
 func NewPolygonObject(vertices []*vector.Vector3d, polygons []*Polygon, center vector.Vector3d) *PolygonObject {
@@ -27,6 +35,7 @@ func NewPolygonObject(vertices []*vector.Vector3d, polygons []*Polygon, center v
 	}
 	for _, polygon := range polygons {
 		po.AddPolygon(polygon)
+
 	}
 	return po
 }
@@ -126,4 +135,10 @@ func (po *PolygonObject) PrintPolygons() {
 
 func (po *PolygonObject) Accept(visitor ObjectVisitor) {
 	visitor.VisitPolygonObject(po)
+}
+
+func (po *PolygonObject) MoveCenterTo(pos vector.Vector3d) {
+	diff := vector.SubtractVectors(&pos, &po.center)
+	po.Transform(transform.NewMoveAction(diff))
+	po.center = pos
 }
