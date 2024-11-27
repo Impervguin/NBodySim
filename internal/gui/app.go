@@ -245,14 +245,14 @@ func (na *NBodyApp) cameraRotateDown() {
 }
 
 func (na *NBodyApp) cameraRotateLeft() {
-	na.cameraMan.RotateRight(-CameraRotateAngle)
+	na.cameraMan.RotateRight(CameraRotateAngle)
 	if na.simulationContext.Err() != nil {
 		na.updateCanvas()
 	}
 }
 
 func (na *NBodyApp) cameraRotateRight() {
-	na.cameraMan.RotateRight(CameraRotateAngle)
+	na.cameraMan.RotateRight(-CameraRotateAngle)
 	if na.simulationContext.Err() != nil {
 		na.updateCanvas()
 	}
@@ -279,6 +279,9 @@ func (na *NBodyApp) createLayout() {
 	cw, ch := CanvasWidth*na.win.Canvas().Scale(), CanvasHeight*na.win.Canvas().Scale()
 
 	na.sim = *simulation.NewSimulation()
+	na.sim.SetCamera(
+		object.NewCamera(*vector.NewVector3d(0, 0, 0), *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, -1, 0), 1, 1, 1),
+	)
 	na.cameraMan = NewCentricCameraManager(na.sim.GetCamera())
 
 	na.lightConv = *conveyer.NewRefactoredSimulationConveyer(
