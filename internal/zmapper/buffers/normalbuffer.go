@@ -1,20 +1,18 @@
 package buffers
 
-import (
-	"NBodySim/internal/object"
-)
+import "NBodySim/internal/mathutils/normal"
 
 type NormalBuffer struct {
-	buf        [][]object.PolygonNormal
+	buf        [][]normal.Normal
 	width      int
 	height     int
-	background object.PolygonNormal
+	background normal.Normal
 }
 
-func NewNormalBuffer(width, height int, background object.PolygonNormal) *NormalBuffer {
-	buf := make([][]object.PolygonNormal, height)
+func NewNormalBuffer(width, height int, background normal.Normal) *NormalBuffer {
+	buf := make([][]normal.Normal, height)
 	for i := 0; i < height; i++ {
-		buf[i] = make([]object.PolygonNormal, width)
+		buf[i] = make([]normal.Normal, width)
 		for j := 0; j < width; j++ {
 			buf[i][j] = background
 		}
@@ -30,7 +28,7 @@ func (n *NormalBuffer) Reset() {
 	}
 }
 
-func (n *NormalBuffer) PutPoint(x, y int, v object.PolygonNormal) (bool, error) {
+func (n *NormalBuffer) PutPoint(x, y int, v normal.Normal) (bool, error) {
 	if (x < 0 || x >= n.width) || (y < 0 || y >= n.height) {
 		return false, ErrOutOfBounds
 	}
@@ -38,9 +36,9 @@ func (n *NormalBuffer) PutPoint(x, y int, v object.PolygonNormal) (bool, error) 
 	return true, nil
 }
 
-func (n *NormalBuffer) GetPoint(x, y int) (object.PolygonNormal, error) {
+func (n *NormalBuffer) GetPoint(x, y int) (normal.Normal, error) {
 	if (x < 0 || x >= n.width) || (y < 0 || y >= n.height) {
-		return object.PolygonNormal{}, ErrOutOfBounds
+		return normal.Normal{}, ErrOutOfBounds
 	}
 	return n.buf[y][x], nil
 }

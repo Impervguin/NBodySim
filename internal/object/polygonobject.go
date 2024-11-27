@@ -102,6 +102,9 @@ func (po *PolygonObject) Clone() Object {
 		polygons[i].v2 = vertices[vertMap[polygon.v2]]
 		polygons[i].v3 = vertices[vertMap[polygon.v3]]
 		polygons[i].color = polygon.color
+		polygons[i].normalInner = polygon.normalInner
+		polygons[i].normalOuter = polygon.normalOuter
+		polygons[i].normal = polygon.normal
 		i++
 	}
 	return NewPolygonObject(vertices, polygons, po.center)

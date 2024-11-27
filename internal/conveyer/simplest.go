@@ -46,8 +46,13 @@ func (sc *SimplestSimulationConveyer) Convey() error {
 	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
 	move := transform.NewMoveAction(vector.NewVector3d(float64(sc.drawer.GetWidth())/2, float64(sc.drawer.GetHeight())/2, 0))
 
+	bcut := cutter.NewBackwardsCutter(cam)
+	objs.Accept(bcut)
+	imobjs.Accept(bcut)
+
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
+	imobjs.Accept(cut)
 
 	imobjs.Transform(persp)
 	imobjs.Transform(canvas)

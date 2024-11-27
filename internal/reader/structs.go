@@ -8,10 +8,12 @@ type Edge struct {
 
 type Polygon struct {
 	Vertexes []int
+	Normals  map[int]int // map from vertex index to its normals
 }
 
 type PolygonObject struct {
 	Vertexes []vector.Vector3d
 	Edges    []Edge
 	Polygons []Polygon
+	Normals  []vector.Vector3d
 }
