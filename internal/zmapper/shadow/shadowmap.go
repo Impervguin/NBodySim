@@ -16,7 +16,8 @@ import (
 type ShadowMap struct {
 	resolution int
 	cam        object.Camera
-	cutter     cutter.Cutter
+	cutter     *cutter.SimpleCamCutter
+	bcutter    *cutter.BackwardsCutter
 	drawer     objectdrawer.ObjectDrawer
 	toMap      transform.TransformAction
 }
@@ -27,8 +28,9 @@ const MaxBias = 0.001
 
 func NewShadowMap(resolution int, cam object.Camera) *ShadowMap {
 	m := &ShadowMap{resolution: resolution,
-		cam:    cam,
-		cutter: cutter.NewSimpleCamCutter(&cam),
+		cam:     cam,
+		cutter:  cutter.NewSimpleCamCutter(&cam),
+		bcutter: cutter.NewBackwardsCutter(&cam),
 		drawer: objectdrawer.NewParallelPerObjectDrawerFabric(
 			mapper.NewParallelDepthZmapperFabric(resolution, resolution, color.Black),
 			approximator.NewDepthApproximatorFabric(),
@@ -53,6 +55,7 @@ func (m *ShadowMap) VisitPolygonObject(object *object.PolygonObject) {
 	cop := object.Clone()
 	cop.Transform(m.cam.GetViewAction())
 	cop.Accept(m.cutter)
+	cop.Accept(m.bcutter)
 	cop.Transform(m.cam.GetPerspectiveTransform())
 	cop.Transform(m.toMap)
 	cop.Accept(m.drawer)

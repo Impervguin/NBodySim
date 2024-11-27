@@ -9,7 +9,6 @@ import (
 type Cutter interface {
 	VisitPolygonObject(po *object.PolygonObject)
 	VisitCamera(cam *object.Camera)
-	VisitPointLight(light *object.PointLight)
 	VisitObjectPool(pool *object.ObjectPool)
 	SeePoint(point *vector.Vector3d) bool
 }
