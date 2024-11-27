@@ -49,6 +49,13 @@ func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 
 	cut := cutter.NewSimpleCamCutter(cam)
 	objs.Accept(cut)
+	imobjs.Accept(cut)
+
+	// pobj, _ := objs.GetObject(6)
+	// p := pobj.(*object.PolygonObject)
+	// for _, pol := range p.GetPolygons() {
+	// 	fmt.Println(pol)
+	// }
 
 	shadowCreator := shadowmapper.NewShadowMapper(512)
 	objs.Accept(shadowCreator)

@@ -1,6 +1,7 @@
 package object
 
 import (
+	"NBodySim/internal/mathutils/normal"
 	"NBodySim/internal/mathutils/vector"
 	"image/color"
 	"math"
@@ -41,11 +42,16 @@ func (p *PointLightShadow) SetShadowModel(m ShadowModel) {
 	p.shadow = m
 }
 
-func (p *PointLightShadow) CalculateLightContribution(point, view, normal vector.Vector3d, c color.Color) color.RGBA64 {
-	if p.shadow.SurfacePointInShadow(point, normal) {
-		lightVector := vector.SubtractVectors(&p.position, &point)
+func (p *PointLightShadow) CalculateLightContribution(point, view vector.Vector3d, normal normal.Normal, c color.Color) color.RGBA64 {
+	if _, ok := p.shadow.(*NoShadowModel); !ok {
+		n := normal.ToVector()
+		n.Normalize()
+		lightVector := vector.SubtractVectors(&point, &p.position)
 		distance := math.Sqrt(lightVector.Square())
-		return p.applyLight(p.calculateAmbientPart(distance), c)
+		lightVector.Normalize()
+		if (normal.NormalIsInner && n.Dot(lightVector) <= 0) || p.shadow.SurfacePointInShadow(point, n) {
+			return p.applyLight(p.calculateAmbientPart(distance), c)
+		}
 	}
 
 	return p.PointLight.CalculateLightContribution(point, view, normal, c)

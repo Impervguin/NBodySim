@@ -173,7 +173,7 @@ func (na *NBodyApp) createObject() {
 		dialog.NewError(err, na.win).Show()
 		return
 	}
-	dir := builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
+	dir := builder.NewPolygonObjectDirector(&builder.InnerNormalBuilderFactory{}, read)
 	obj, err := dir.Construct()
 	if err != nil {
 		dialog.NewError(err, na.win).Show()

@@ -26,6 +26,7 @@ func (or *ObjReader) ReadPolygonObject() (*PolygonObject, error) {
 	vertices := make([]vector.Vector3d, 0)
 	edges := make([]Edge, 0)
 	polygons := make([]Polygon, 0)
+	normals := make([]vector.Vector3d, 0)
 
 	scan := bufio.NewScanner(f)
 	for scan.Scan() {
@@ -57,12 +58,30 @@ func (or *ObjReader) ReadPolygonObject() (*PolygonObject, error) {
 				return nil, err
 			}
 			vertices = append(vertices, *vector.NewVector3d(x, y, z))
+		case "vn":
+			if len(parts) < 4 {
+				return nil, fmt.Errorf("invalid normal line: %s", str)
+			}
+			x, err := strconv.ParseFloat(parts[1], 64)
+			if err != nil {
+				return nil, err
+			}
+			y, err := strconv.ParseFloat(parts[2], 64)
+			if err != nil {
+				return nil, err
+			}
+			z, err := strconv.ParseFloat(parts[3], 64)
+			if err != nil {
+				return nil, err
+			}
+			normals = append(normals, *vector.NewVector3d(x, y, z))
 		case "f":
 			if len(parts) < 4 {
 				return nil, fmt.Errorf("invalid face line: %s", str)
 			}
-			faceIndices := make([]int, 0)
-			for _, indexStr := range parts[1:] {
+			vertexIndices := make([]int, 0)
+			normalIndices := make(map[int]int)
+			for i, indexStr := range parts[1:] {
 				vParts := strings.Split(indexStr, "/")
 				if len(vParts) == 0 {
 					return nil, fmt.Errorf("invalid face index: %s", indexStr)
@@ -71,14 +90,28 @@ func (or *ObjReader) ReadPolygonObject() (*PolygonObject, error) {
 				if err != nil {
 					return nil, err
 				}
-				faceIndices = append(faceIndices, vIndex-1)
+				if vIndex < 1 || vIndex > len(vertices) {
+					return nil, fmt.Errorf("invalid vertex index: %d", vIndex)
+				}
+				vertexIndices = append(vertexIndices, vIndex-1)
+
+				if len(vParts) >= 3 {
+					nIndex, err := strconv.Atoi(vParts[2])
+					if err != nil {
+						return nil, err
+					}
+					if nIndex < 1 || nIndex > len(normals) {
+						return nil, fmt.Errorf("invalid normal index: %d", nIndex)
+					}
+					normalIndices[i] = nIndex - 1
+				}
 			}
-			polygon := Polygon{faceIndices}
+			polygon := Polygon{vertexIndices, normalIndices}
 			polygons = append(polygons, polygon)
-			for i := 0; i < len(faceIndices)-1; i++ {
-				edges = append(edges, Edge{faceIndices[i], faceIndices[i+1]})
+			for i := 0; i < len(vertexIndices)-1; i++ {
+				edges = append(edges, Edge{vertexIndices[i], vertexIndices[i+1]})
 			}
-			edges = append(edges, Edge{faceIndices[len(faceIndices)-1], faceIndices[0]})
+			edges = append(edges, Edge{vertexIndices[len(vertexIndices)-1], vertexIndices[0]})
 		}
 	}
 	if err := scan.Err(); err != nil {
@@ -88,6 +121,7 @@ func (or *ObjReader) ReadPolygonObject() (*PolygonObject, error) {
 		Vertexes: vertices,
 		Edges:    edges,
 		Polygons: polygons,
+		Normals:  normals,
 	}
 	return po, nil
 }

@@ -71,7 +71,7 @@ func (c *SimpleCamCutter) SeePolygon(p *object.Polygon) bool {
 
 func (c *SimpleCamCutter) CutPolygon(p *object.Polygon) []*object.Polygon {
 	v1, v2, v3 := p.GetVertices()
-	res := append(make([]*object.Polygon, 0, 4), object.NewPolygon(v1, v2, v3, p.GetColor()))
+	res := append(make([]*object.Polygon, 0, 4), p.Clone())
 	if c.SeePoint(v1) && c.SeePoint(v2) && c.SeePoint(v3) {
 		return res
 	}
@@ -118,16 +118,22 @@ func (c *SimpleCamCutter) CutPolygonAtPlane(p *object.Polygon, plane *plane.Plan
 		v1, v2 := unseen[0], unseen[1]
 		intersec1, _ := plane.Intersection(vseen, v1)
 		intersec2, _ := plane.Intersection(vseen, v2)
-		return []*object.Polygon{object.NewPolygon(vseen, intersec1, intersec2, p.GetColor())}
+		pc := p.Clone()
+		pc.SetVertices(vseen, intersec1, intersec2)
+		return []*object.Polygon{pc}
 	}
 	if len(seen) == 2 {
 		vunseen := unseen[0]
 		v1, v2 := seen[0], seen[1]
 		intersec1, _ := plane.Intersection(vunseen, v1)
 		intersec2, _ := plane.Intersection(vunseen, v2)
+		pc1 := p.Clone()
+		pc1.SetVertices(v1, v2, intersec1)
+		pc2 := p.Clone()
+		pc2.SetVertices(v2, intersec1, intersec2)
 		return []*object.Polygon{
-			object.NewPolygon(v1, v2, intersec1, p.GetColor()),
-			object.NewPolygon(v2, intersec1, intersec2, p.GetColor()),
+			pc1,
+			pc2,
 		}
 	}
 	return make([]*object.Polygon, 0)

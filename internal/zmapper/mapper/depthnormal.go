@@ -1,6 +1,7 @@
 package mapper
 
 import (
+	"NBodySim/internal/mathutils/normal"
 	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/object"
 	"NBodySim/internal/transform"
@@ -47,7 +48,7 @@ func newParallelZmapperWithNormals(width, height int, background color.Color, df
 		width:  width,
 		height: height,
 		sbuf:   *buffers.NewScreenBuffer(width, height, background),
-		nbuf:   *buffers.NewNormalBuffer(width, height, object.PolygonNormal{}),
+		nbuf:   *buffers.NewNormalBuffer(width, height, normal.Normal{}),
 		dbuf:   df.CreateDepthBuffer(width, height),
 		sync:   *buffers.NewSyncBuffer(width, height),
 	}
@@ -141,13 +142,11 @@ func (pz *ParallelZmapperWithNormals) ApplyLight(lp *object.LightPool, tolights 
 					tolights.ApplyToVector(vec)
 					normal := dp.Normal
 					normal.Transform(tolights)
-					nvec := normal.ToVector()
-					nvec.Normalize()
 
 					view := vector.NewVector3d(float64(pz.width)/2, float64(pz.height)/2, 0)
 					tolights.ApplyToVector(view)
 
-					dp.Color = lp.CalculateLight(*vec, *view, nvec, dp.Color)
+					dp.Color = lp.CalculateLight(*vec, *view, normal, dp.Color)
 					pz.updatePoint(dp)
 				}
 			}

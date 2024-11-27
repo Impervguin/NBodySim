@@ -2,6 +2,7 @@ package object
 
 import (
 	"NBodySim/internal/mathutils"
+	"NBodySim/internal/mathutils/normal"
 	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/transform"
 	"image/color"
@@ -92,11 +93,13 @@ func (p *PointLight) applyLight(light color.RGBA64, objColor color.Color) color.
 	return alt_t
 
 }
-func (p *PointLight) CalculateLightContribution(point, view, normal vector.Vector3d, c color.Color) color.RGBA64 {
+func (p *PointLight) CalculateLightContribution(point, view vector.Vector3d, normal normal.Normal, c color.Color) color.RGBA64 {
 	lightVector := vector.SubtractVectors(&p.position, &point)
 	distance := math.Sqrt(lightVector.Square())
 	lightVector.Normalize()
-	diffuse := math.Abs(lightVector.Dot(&normal)*diffuseCoefficient) / ((minimalDistance + distance) * diffuseDistanceFactor)
+	n := normal.ToVector()
+	n.Normalize()
+	diffuse := math.Abs(lightVector.Dot(&n)*diffuseCoefficient) / ((minimalDistance + distance) * diffuseDistanceFactor)
 	diff := mathutils.MultRGBA64(p.intensity, diffuse)
 
 	amb := p.calculateAmbientPart(distance)

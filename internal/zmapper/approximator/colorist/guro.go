@@ -33,16 +33,16 @@ func (c *GuroColorist) VisitPolygonObject(po *object.PolygonObject) {
 }
 
 func (c *GuroColorist) processPolygon(p *object.Polygon) {
-	normal := p.GetNormal().ToVector()
+	normal := p.GetNormal()
 	pcolor := p.GetColor()
 	color := GuroColorModel{
 		C: make(map[int64]PolygonColor, len(c.lights)),
 	}
 	v1, v2, v3 := p.GetVertices()
 	for _, l := range c.lights {
-		l1color := l.CalculateLightContribution(*v1, c.view, normal, pcolor)
-		l2color := l.CalculateLightContribution(*v2, c.view, normal, pcolor)
-		l3color := l.CalculateLightContribution(*v3, c.view, normal, pcolor)
+		l1color := l.CalculateLightContribution(*v1, c.view, *normal, pcolor)
+		l2color := l.CalculateLightContribution(*v2, c.view, *normal, pcolor)
+		l3color := l.CalculateLightContribution(*v3, c.view, *normal, pcolor)
 		color.C[l.GetId()] = PolygonColor{mathutils.ToRGBA(l1color), mathutils.ToRGBA(l2color), mathutils.ToRGBA(l3color)}
 	}
 	p.SetColorModel(&color)

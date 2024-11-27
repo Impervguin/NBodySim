@@ -1,6 +1,7 @@
 package approximator
 
 import (
+	"NBodySim/internal/mathutils/normal"
 	"NBodySim/internal/object"
 	"NBodySim/internal/zmapper/approximator/colorist"
 	"image/color"
@@ -15,7 +16,7 @@ type DiscreteFlatPoint struct {
 type DiscreteNormalPoint struct {
 	X, Y   int
 	Z      float64
-	Normal object.PolygonNormal
+	Normal normal.Normal
 	Color  color.Color
 }
 

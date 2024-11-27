@@ -2,6 +2,7 @@ package object
 
 import (
 	"NBodySim/internal/mathutils"
+	"NBodySim/internal/mathutils/normal"
 	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/transform"
 	"image/color"
@@ -60,10 +61,9 @@ func (lp *LightPool) Transform(action transform.TransformAction) {
 // 	vis.VisitLightPool(lp)
 // }
 
-func (lp *LightPool) CalculateLight(point, view, normal vector.Vector3d, col color.Color) color.Color {
+func (lp *LightPool) CalculateLight(point, view vector.Vector3d, normal normal.Normal, col color.Color) color.Color {
 	contribution := mathutils.ToRGBA64(color.Black)
 	for _, light := range lp.lights {
-		// fmt.Println(light)
 		contribution = mathutils.AddRGBA64(contribution, light.CalculateLightContribution(point, view, normal, col))
 	}
 	return contribution
