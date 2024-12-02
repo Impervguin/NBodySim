@@ -245,14 +245,14 @@ func (na *NBodyApp) cameraRotateDown() {
 }
 
 func (na *NBodyApp) cameraRotateLeft() {
-	na.cameraMan.RotateRight(CameraRotateAngle)
+	na.cameraMan.RotateRight(-CameraRotateAngle)
 	if na.simulationContext.Err() != nil {
 		na.updateCanvas()
 	}
 }
 
 func (na *NBodyApp) cameraRotateRight() {
-	na.cameraMan.RotateRight(-CameraRotateAngle)
+	na.cameraMan.RotateRight(CameraRotateAngle)
 	if na.simulationContext.Err() != nil {
 		na.updateCanvas()
 	}

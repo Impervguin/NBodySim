@@ -70,8 +70,7 @@ func (c *Camera) Transform(action transform.TransformAction) {
 }
 
 func (c *Camera) GetViewMatrix() *vector.Matrix4d {
-	right := vector.CrossProduct(&c.forward, &c.up)
-	right.Normalize()
+	right := c.GetRight()
 
 	viewMatrix := vector.NewMatrix4d(
 		right.X, c.up.X, c.forward.X, 0,
@@ -129,7 +128,7 @@ func (c *Camera) GetForward() vector.Vector3d {
 }
 
 func (c *Camera) GetRight() vector.Vector3d {
-	right := vector.CrossProduct(&c.forward, &c.up)
+	right := vector.CrossProduct(&c.up, &c.forward)
 	right.Normalize()
 	return *right
 }

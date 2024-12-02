@@ -55,7 +55,7 @@ func (m *ShadowMap) VisitPolygonObject(object *object.PolygonObject) {
 	cop := object.Clone()
 	cop.Transform(m.cam.GetViewAction())
 	cop.Accept(m.cutter)
-	cop.Accept(m.bcutter)
+	// cop.Accept(m.bcutter)
 	cop.Transform(m.cam.GetPerspectiveTransform())
 	cop.Transform(m.toMap)
 	cop.Accept(m.drawer)

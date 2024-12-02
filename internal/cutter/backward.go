@@ -44,10 +44,10 @@ func (c *BackwardsCutter) VisitPolygonObject(po *object.PolygonObject) {
 
 func (c *BackwardsCutter) SeePolygon(polygon *object.Polygon) bool {
 	normal := polygon.GetNormal().ToVector()
-	if polygon.NormalIsOuter() && normal.Dot(&c.forward) >= -1e-6 {
+	if polygon.NormalIsOuter() && normal.Dot(&c.forward) >= 1e-6 {
 		return false
 	}
-	if polygon.NormalIsInner() && normal.Dot(&c.forward) <= 1e-6 {
+	if polygon.NormalIsInner() && normal.Dot(&c.forward) <= -1e6 {
 		return false
 	}
 	return true
