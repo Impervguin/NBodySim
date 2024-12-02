@@ -39,7 +39,7 @@ func (m *CentricCameraManager) MoveCamera(_, _, dz float64) {
 func (m *CentricCameraManager) RotateUp(angle float64) {
 	angle = mathutils.ToRadians(angle)
 	right := m.camera.GetRight()
-	m.camera.Transform(transform.NewAxisRotateAction(&right, -angle))
+	m.camera.Transform(transform.NewAxisRotateAction(&right, angle))
 }
 
 func (m *CentricCameraManager) RotateRight(angle float64) {

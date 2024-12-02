@@ -73,9 +73,9 @@ func (c *Camera) GetViewMatrix() *vector.Matrix4d {
 	right := c.GetRight()
 
 	viewMatrix := vector.NewMatrix4d(
-		right.X, c.up.X, c.forward.X, 0,
-		right.Y, c.up.Y, c.forward.Y, 0,
-		right.Z, c.up.Z, c.forward.Z, 0,
+		-right.X, c.up.X, c.forward.X, 0,
+		-right.Y, c.up.Y, c.forward.Y, 0,
+		-right.Z, c.up.Z, c.forward.Z, 0,
 		0, 0, 0, 1,
 	)
 
@@ -128,7 +128,7 @@ func (c *Camera) GetForward() vector.Vector3d {
 }
 
 func (c *Camera) GetRight() vector.Vector3d {
-	right := vector.CrossProduct(&c.up, &c.forward)
+	right := vector.CrossProduct(&c.forward, &c.up)
 	right.Normalize()
 	return *right
 }
