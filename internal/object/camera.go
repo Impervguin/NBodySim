@@ -11,8 +11,8 @@ type Camera struct {
 	position            vector.Vector3d
 	forward             vector.Vector3d
 	up                  vector.Vector3d
-	px                  float64 // Размер окна просмотра по x(в пространстве камеры)
-	py                  float64 // Размер окна просмотра по y(в пространстве камеры)
+	px                  float64 // Полуразмер окна просмотра по x(в пространстве камеры)
+	py                  float64 // Полуразмер окна просмотра по y(в пространстве камеры)
 	d                   float64 // Дальность от позиции камеры, до окна просмотра
 	view                CameraViewAction
 	modifiedView        bool

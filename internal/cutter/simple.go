@@ -19,11 +19,11 @@ func NewSimpleCamCutter(camera *object.Camera) *SimpleCamCutter {
 	d := camera.GetDistance()
 	px, py := camera.GetWidth(), camera.GetHeight()
 	view := object.NewCameraViewAction(camera)
-	right := plane.NewPlane(*vector.NewVector3d(-2*d/px, 0, 1), 0)
-	left := plane.NewPlane(*vector.NewVector3d(2*d/px, 0, 1), 0)
-	bottom := plane.NewPlane(*vector.NewVector3d(0, 2*d/py, 1), 0)
-	top := plane.NewPlane(*vector.NewVector3d(0, -2*d/py, 1), 0)
-	back := plane.NewPlane(*vector.NewVector3d(0, 0, 1), d)
+	right := plane.NewPlane(*vector.NewVector3d(-d/px, 0, 1), 0)
+	left := plane.NewPlane(*vector.NewVector3d(d/px, 0, 1), 0)
+	bottom := plane.NewPlane(*vector.NewVector3d(0, d/py, 1), 0)
+	top := plane.NewPlane(*vector.NewVector3d(0, -d/py, 1), 0)
+	back := plane.NewPlane(*vector.NewVector3d(0, 0, 1), -d)
 	return &SimpleCamCutter{
 		camera:   camera,
 		left:     left,

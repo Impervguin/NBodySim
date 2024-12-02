@@ -280,7 +280,7 @@ func (na *NBodyApp) createLayout() {
 
 	na.sim = *simulation.NewSimulation()
 	na.sim.SetCamera(
-		object.NewCamera(*vector.NewVector3d(0, 0, 0), *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, -1, 0), 1, 1, 1),
+		object.NewCamera(*vector.NewVector3d(0, 0, 0), *vector.NewVector3d(0, 0, 1), *vector.NewVector3d(0, -1, 0), 2, 2, 1),
 	)
 	na.cameraMan = NewCentricCameraManager(na.sim.GetCamera())
 

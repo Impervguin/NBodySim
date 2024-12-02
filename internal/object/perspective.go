@@ -28,6 +28,8 @@ func (act *PerspectiveTransform) ApplyToVector(vector *vector.Vector3d) {
 		act.after.ApplyToVector(vector)
 	}
 }
+
+// deprecated
 func (act *PerspectiveTransform) ApplyToHomoVector(homoVector *vector.HomoVector) {
 	if homoVector.Z != 0 {
 		homoVector.X = homoVector.X * act.camera.GetPerspectiveXYModifier() / homoVector.Z * 2 * homoVector.W
@@ -36,7 +38,6 @@ func (act *PerspectiveTransform) ApplyToHomoVector(homoVector *vector.HomoVector
 	if act.after != nil {
 		act.after.ApplyToHomoVector(homoVector)
 	}
-
 }
 
 func (act *PerspectiveTransform) ApplyAfter(tr transform.TransformAction) {
@@ -58,8 +59,8 @@ func NewReversePerspectiveTransform(camera *Camera) *ReversePerspectiveTransform
 func (act *ReversePerspectiveTransform) ApplyToVector(vector *vector.Vector3d) {
 	if vector.Z != 1 {
 		vector.Z = 2 * act.camera.GetDistance() / (vector.Z - 1)
-		vector.X = vector.X * (vector.Z * act.camera.GetWidth()) / (act.camera.GetPerspectiveXYModifier())
-		vector.Y = vector.Y * (vector.Z * act.camera.GetHeight()) / (act.camera.GetPerspectiveXYModifier())
+		vector.X = vector.X * (vector.Z * act.camera.GetWidth()) / (act.camera.GetDistance())
+		vector.Y = vector.Y * (vector.Z * act.camera.GetHeight()) / (act.camera.GetDistance())
 	}
 	if act.after != nil {
 		act.after.ApplyToVector(vector)
