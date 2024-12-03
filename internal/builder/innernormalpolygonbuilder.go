@@ -76,7 +76,7 @@ func (b *InnerNormalPolygonBuilder) buildPolygon() error {
 		if len(polygon.Vertexes) > 3 {
 			start := polygon.Vertexes[0]
 			color := DefaultObjectColor
-			for i := range polygon.Vertexes[1 : len(polygon.Vertexes)-1] {
+			for i := 1; i < len(polygon.Vertexes)-1; i++ {
 				n := normal.NewNormal(*b.vertices[polygon.Vertexes[start]], *vector.AddVectors(b.vertices[polygon.Vertexes[start]], &innerNormal))
 				opolygon, err := object.NewPolygonInnerNormal(
 					b.vertices[polygon.Vertexes[start]],

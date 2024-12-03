@@ -44,10 +44,15 @@ func (c *BackwardsCutter) VisitPolygonObject(po *object.PolygonObject) {
 
 func (c *BackwardsCutter) SeePolygon(polygon *object.Polygon) bool {
 	normal := polygon.GetNormal().ToVector()
-	if polygon.NormalIsOuter() && normal.Dot(&c.forward) >= 1e-6 {
+	pos := c.camera.GetCenter()
+	v1, v2, v3 := polygon.GetVertices()
+	cameraToV1 := vector.SubtractVectors(v1, &pos)
+	cameraToV2 := vector.SubtractVectors(v2, &pos)
+	cameraToV3 := vector.SubtractVectors(v3, &pos)
+	if polygon.NormalIsOuter() && normal.Dot(cameraToV1) >= 1e-6 && normal.Dot(cameraToV2) >= 1e-6 && normal.Dot(cameraToV3) >= 1e-6 {
 		return false
 	}
-	if polygon.NormalIsInner() && normal.Dot(&c.forward) <= -1e6 {
+	if polygon.NormalIsInner() && normal.Dot(cameraToV1) <= -1e-6 && normal.Dot(cameraToV2) <= -1e-6 && normal.Dot(cameraToV3) <= -1e-6 {
 		return false
 	}
 	return true

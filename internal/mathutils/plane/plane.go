@@ -11,8 +11,9 @@ type Plane struct {
 }
 
 func NewPlane(normal vector.Vector3d, d float64) *Plane {
+	coeff := vector.Length(&normal)
 	normal.Normalize()
-	return &Plane{normal: normal, d: d}
+	return &Plane{normal: normal, d: d / coeff}
 }
 
 func (p *Plane) Distance(point *vector.Vector3d) float64 {

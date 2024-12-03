@@ -5,6 +5,8 @@ import (
 	"math"
 )
 
+const epsilon = 1e-6
+
 type Vector3d struct {
 	X, Y, Z float64
 }
@@ -43,7 +45,6 @@ func CrossProduct(v1, v2 *Vector3d) *Vector3d {
 		v1.X*v2.Y-v1.Y*v2.X,
 	)
 	return vec
-
 }
 
 func Length(v *Vector3d) float64 {
@@ -113,4 +114,10 @@ func (v *Vector3d) Square() float64 {
 
 func (v *Vector3d) ToHomoVector() *HomoVector {
 	return NewHomoVector(v.X, v.Y, v.Z, 1)
+}
+
+func IsEqual(v1, v2 *Vector3d) bool {
+	return math.Abs(v1.X-v2.X) < epsilon &&
+		math.Abs(v1.Y-v2.Y) < epsilon &&
+		math.Abs(v1.Z-v2.Z) < epsilon
 }
