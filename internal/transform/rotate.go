@@ -67,7 +67,7 @@ func NewAxisRotateAction(axis *vector.Vector3d, angle float64) *AxisRotateAction
 		ux*uz*cos1+uy*sinAngle, uy*uz*cos1-ux*sinAngle, uz*uz*cos1+cosAngle, 0,
 		0, 0, 0, 1,
 	)
-	base.matrix = *base.matrix.Multiply(rot)
+	base.matrix = *rot
 	return &AxisRotateAction{BaseMatrixTransform: *base}
 
 }

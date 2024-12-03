@@ -31,3 +31,11 @@ func (pn *Normal) Copy() *Normal {
 		NormalIsInner: pn.NormalIsInner,
 	}
 }
+
+func IsEqual(n1, n2 *Normal) bool {
+	nv1 := n1.ToVector()
+	nv1.Normalize()
+	nv2 := n2.ToVector()
+	nv2.Normalize()
+	return vector.IsEqual(&nv1, &nv2)
+}

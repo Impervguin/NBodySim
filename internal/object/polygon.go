@@ -1,6 +1,7 @@
 package object
 
 import (
+	"NBodySim/internal/mathutils"
 	"NBodySim/internal/mathutils/normal"
 	"NBodySim/internal/mathutils/vector"
 	"NBodySim/internal/transform"
@@ -129,4 +130,17 @@ func (p *Polygon) SetNormalOuter() {
 
 func (p *Polygon) ResetNormalOuter() {
 	p.normalOuter = false
+}
+
+func PolygonEqual(p1, p2 *Polygon) bool {
+	verticesEqual := false
+	if vector.IsEqual(p1.v1, p2.v1) && vector.IsEqual(p1.v2, p2.v2) && vector.IsEqual(p1.v3, p2.v3) ||
+		vector.IsEqual(p1.v1, p2.v1) && vector.IsEqual(p1.v2, p2.v3) && vector.IsEqual(p1.v3, p2.v2) ||
+		vector.IsEqual(p1.v1, p2.v2) && vector.IsEqual(p1.v2, p2.v3) && vector.IsEqual(p1.v3, p2.v1) ||
+		vector.IsEqual(p1.v1, p2.v2) && vector.IsEqual(p1.v2, p2.v1) && vector.IsEqual(p1.v3, p2.v3) ||
+		vector.IsEqual(p1.v1, p2.v3) && vector.IsEqual(p1.v2, p2.v2) && vector.IsEqual(p1.v3, p2.v1) ||
+		vector.IsEqual(p1.v1, p2.v3) && vector.IsEqual(p1.v2, p2.v1) && vector.IsEqual(p1.v3, p2.v2) {
+		verticesEqual = true
+	}
+	return verticesEqual && mathutils.ColorEqual(p1.color, p2.color) && normal.IsEqual(&p1.normal, &p2.normal)
 }
