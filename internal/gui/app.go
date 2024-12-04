@@ -91,7 +91,7 @@ func NewNBodyApp() *NBodyApp {
 }
 
 func (na *NBodyApp) initSimulation() {
-	na.createObject()
+	// na.createObject()
 	na.cameraMan.MoveCamera(0, 0, -15)
 
 	na.light = object.NewPointLightShadow(color.White, *vector.NewVector3d(0, 0, 0))
