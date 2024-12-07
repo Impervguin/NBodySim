@@ -5,6 +5,7 @@ import (
 	"NBodySim/internal/nbody"
 	"NBodySim/internal/object"
 	"NBodySim/internal/transform"
+	"math"
 )
 
 type PhysicalBody struct {
@@ -16,7 +17,9 @@ type PhysicalBody struct {
 var ph nbody.Body = (*PhysicalBody)(nil)
 
 func NewPhysicalBody(obj object.Object, velocity vector.Vector3d, mass float64) *PhysicalBody {
-	return &PhysicalBody{obj: obj, velocity: velocity, mass: mass}
+	b := &PhysicalBody{obj: obj, mass: mass}
+	b.SetVelocity(velocity)
+	return b
 }
 
 func (b *PhysicalBody) GetId() int64 {
@@ -40,7 +43,30 @@ func (b *PhysicalBody) GetMass() float64 {
 }
 
 func (b *PhysicalBody) SetVelocity(velocity vector.Vector3d) {
+	oldVelocity := b.velocity.Copy()
 	b.velocity = velocity
+	newVelocity := b.velocity.Copy()
+
+	if vector.IsEqual(oldVelocity, &vector.Vector3d{}) {
+		oldVelocity = vector.NewVector3d(0, 0, 1)
+	}
+	if vector.IsEqual(newVelocity, &vector.Vector3d{}) {
+		newVelocity = vector.NewVector3d(0, 0, 1)
+	}
+	oldVelocity.Normalize()
+	newVelocity.Normalize()
+	if vector.IsEqual(oldVelocity, newVelocity) {
+		return
+	}
+	angleCos := oldVelocity.Dot(newVelocity)
+	if angleCos < -1 || angleCos > 1 {
+		angleCos = 1
+	}
+	angle := math.Acos(angleCos)
+	axis := vector.CrossProduct(oldVelocity, newVelocity)
+	axis.Normalize()
+	rotate := transform.NewAxisRotateAction(axis, angle)
+	b.obj.Transform(rotate)
 }
 func (b *PhysicalBody) SetPosition(position vector.Vector3d) {
 	currentPos := b.GetPosition()
