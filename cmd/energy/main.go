@@ -14,10 +14,10 @@ const outFile = "energy.log"
 func main() {
 	nb := nbody.NewNBody(nbody.NewEulerSolver(), nbody.NewIterativeNbodyEngine())
 
-	body1 := nbody.NewOnlyBody(*vector.NewVector3d(0, 0, 40), *vector.NewVector3d(0.2, 0, 0), 100000000000)
-	body2 := nbody.NewOnlyBody(*vector.NewVector3d(40, 0, 0), *vector.NewVector3d(0, 0, -0.2), 100000000000)
-	body3 := nbody.NewOnlyBody(*vector.NewVector3d(0, 0, -40), *vector.NewVector3d(-0.2, 0, 0), 100000000000)
-	body4 := nbody.NewOnlyBody(*vector.NewVector3d(-40, 0, 0), *vector.NewVector3d(0, 0, 0.2), 100000000000)
+	body1 := nbody.NewOnlyBody(*vector.NewVector3d(0, 0, 50), *vector.NewVector3d(0.2, 0, 0), 100000000000)
+	body2 := nbody.NewOnlyBody(*vector.NewVector3d(50, 0, 0), *vector.NewVector3d(0, 0, -0.2), 100000000000)
+	body3 := nbody.NewOnlyBody(*vector.NewVector3d(0, 0, -50), *vector.NewVector3d(-0.2, 0, 0), 100000000000)
+	body4 := nbody.NewOnlyBody(*vector.NewVector3d(-50, 0, 0), *vector.NewVector3d(0, 0, 0.2), 100000000000)
 	nb.AddBody(body1)
 	nb.AddBody(body2)
 	nb.AddBody(body3)

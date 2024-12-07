@@ -50,3 +50,31 @@ func (es *EulerSolver) UpdateSelf(cur []PhysBody) {
 	es.past = make([]PhysBody, len(cur))
 	copy(es.past, cur)
 }
+
+// type RungeKutta4Solver struct {
+// 	past []PhysBody
+// }
+
+// func NewRungeKutta4Solver() *RungeKutta4Solver {
+// 	return &RungeKutta4Solver{past: make([]PhysBody, 0)}
+// }
+
+// func (rk4 *RungeKutta4Solver) CalculateBody(body *PhysBody, dt float64) (*PhysBody, error) {
+// 	vel1 := body.Velocity.Copy()
+// 	force1 := vector.NewVector3d(0, 0, 0)
+// 	for _, influencer := range rk4.past {
+// 		if influencer.Id != body.Id {
+// 			force1.Add(Body2Force(body, &influencer))
+// 		}
+// 	}
+
+// }
+
+// func (rk4 *RungeKutta4Solver) Reset() {
+// 	rk4.past = make([]PhysBody, 0)
+// }
+
+// func (rk4 *RungeKutta4Solver) UpdateSelf(cur []PhysBody) {
+// 	rk4.past = make([]PhysBody, len(cur))
+// 	copy(rk4.past, cur)
+// }

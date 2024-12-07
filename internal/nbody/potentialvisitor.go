@@ -25,7 +25,7 @@ func (v *PotentialVisitor) VisitNBody(nbody *NBody) {
 				p2 := b2.GetPosition()
 				distance := vector.Length(vector.SubtractVectors(&p1, &p2))
 				// fmt.Println(-b1.GetMass() * b2.GetMass() / distance)
-				v.potentialEnergy += -b1.GetMass() * b2.GetMass() / distance
+				v.potentialEnergy += -G * b1.GetMass() * b2.GetMass() / distance
 			}
 		}
 	}
