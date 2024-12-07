@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, 5)))
+	cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, 40)))
 
 	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
@@ -40,7 +40,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(5, 0, 0)))
+	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(40, 0, 0)))
 
 	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
@@ -48,7 +48,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -5)))
+	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -40)))
 	// fmt.Println(cube3.GetCenter())
 
 	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
@@ -57,10 +57,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube4.Transform(transform.NewMoveAction(vector.NewVector3d(-5, 0, 0)))
+	cube4.Transform(transform.NewMoveAction(vector.NewVector3d(-40, 0, 0)))
 
 	cam := object.NewCamera(
-		*vector.NewVector3d(0, 0, -30),
+		*vector.NewVector3d(0, 0, -120),
 		*vector.NewVector3d(0, 0, 1),
 		*vector.NewVector3d(0, 1, 0),
 		1, 1, 1,
@@ -73,10 +73,10 @@ func main() {
 
 	sim := simulation.NewSimulation()
 	sim.SetCamera(cam)
-	sim.AddObject(cube, *vector.NewVector3d(0.02, 0, 0), 1000000000)
-	sim.AddObject(cube2, *vector.NewVector3d(0, 0, -.02), 1000000000)
-	sim.AddObject(cube3, *vector.NewVector3d(-.02, 0, 0), 1000000000)
-	sim.AddObject(cube4, *vector.NewVector3d(0, 0, .02), 1000000000)
+	sim.AddObject(cube, *vector.NewVector3d(0.2, 0, 0), 100000000000)
+	sim.AddObject(cube2, *vector.NewVector3d(0, 0, -.2), 100000000000)
+	sim.AddObject(cube3, *vector.NewVector3d(-.2, 0, 0), 100000000000)
+	sim.AddObject(cube4, *vector.NewVector3d(0, 0, .2), 100000000000)
 	sim.AddLight(light1)
 	sim.AddLight(light2)
 	// sim.AddLight(light3)
@@ -107,7 +107,7 @@ func main() {
 		for {
 			time.Sleep(timeToSleep)
 			startTime := time.Now()
-			sim.UpdateFor(FPStime.Seconds())
+			sim.UpdateFor(1)
 			// cam.Transform(transform.NewRotateAction(vector.NewVector3d(0, math.Pi/60, 0)))
 			conv.Convey()
 			nraster.Refresh()

@@ -12,6 +12,10 @@ func NewNBody(solver NBodySolver, engine NBodyEngine) *NBody {
 	return &NBody{nbody: make(map[int64]Body), solver: solver, engine: engine}
 }
 
+func (b *NBody) Accept(vis NBodyVisitor) {
+	vis.VisitNBody(b)
+}
+
 func (sim *NBody) ResetSolver() {
 	sim.solver.Reset()
 	bodies := make([]PhysBody, 0, len(sim.nbody))
