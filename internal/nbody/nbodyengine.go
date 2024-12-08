@@ -11,7 +11,7 @@ func NewIterativeNbodyEngine() *IterativeNbodyEngine {
 }
 
 func (e *IterativeNbodyEngine) Calculate(bodies []PhysBody, solver NBodySolver, dt float64) error {
-	for i, _ := range bodies {
+	for i := range bodies {
 		_, err := solver.CalculateBody(&bodies[i], dt)
 		if err != nil {
 			return err

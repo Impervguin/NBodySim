@@ -1,11 +1,11 @@
-\documentclass[oneside, a4paper, 14pt]{extreport}
+\documentclass[oneside, a4paper, 12pt]{extreport}
 
-\usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english,russian]{babel}
 \usepackage{amssymb,amsfonts,amsmath,mathtext,cite,enumerate,float}
 \usepackage{pgfplots}
 \usepackage{graphicx}
+\usepackage[inkscapeformat=png]{svg}
 \usepackage{tocloft}
 \usepackage{listings}
 \usepackage{caption}
@@ -21,6 +21,7 @@
 \usepackage{flafter}
 \usepackage{enumitem}
 \usepackage{multirow}
+\usepackage{longtable}
 
 \usepackage[figure,table]{totalcount}
 \usepackage{lastpage}
@@ -69,9 +70,9 @@
 \renewcommand{\theenumi}{\arabic{enumi}}
 \renewcommand{\labelenumi}{\arabic{enumi}\text{)}}
 \renewcommand{\theenumii}{.\arabic{enumii}}
-\renewcommand{\labelenumii}{\asbuk{enumii}\text{)}}
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}\text{)}}
 \renewcommand{\theenumiii}{.\arabic{enumiii}}
-\renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.}
+\renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}\text{)}}
 
 \renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
 
@@ -83,6 +84,8 @@
 \captionsetup[table]{labelsep=dash,justification=raggedright,singlelinecheck=off}
 
 \graphicspath{{images/}}%путь к рисункам
+
+
 
 \newcommand{\floor}[1]{\lfloor #1 \rfloor}
 

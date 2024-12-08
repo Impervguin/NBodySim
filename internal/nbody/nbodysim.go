@@ -12,6 +12,10 @@ func NewNBody(solver NBodySolver, engine NBodyEngine) *NBody {
 	return &NBody{nbody: make(map[int64]Body), solver: solver, engine: engine}
 }
 
+func (b *NBody) Accept(vis NBodyVisitor) {
+	vis.VisitNBody(b)
+}
+
 func (sim *NBody) ResetSolver() {
 	sim.solver.Reset()
 	bodies := make([]PhysBody, 0, len(sim.nbody))
@@ -50,6 +54,14 @@ func (sim *NBody) UpdateBody(body Body) error {
 func (sim *NBody) GetBody(id int64) (Body, bool) {
 	b, ok := sim.nbody[id]
 	return b, ok
+}
+
+func (sim *NBody) GetBodies() ([]Body, error) {
+	bodies := make([]Body, 0, len(sim.nbody))
+	for _, body := range sim.nbody {
+		bodies = append(bodies, body)
+	}
+	return bodies, nil
 }
 
 func (sim *NBody) Clone() *NBody {
