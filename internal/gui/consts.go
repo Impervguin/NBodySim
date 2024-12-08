@@ -36,7 +36,7 @@ const DodecahedronModelFile = "./models/12_dodecahedron.obj"
 const IcosahedronModelFile = "./models/20_icosahedron.obj"
 
 // Mass
-const MassMultiplier = 10.e9
+const MassMultiplier = 1.e9
 
 // light
 var DefaultLightColor = color.White

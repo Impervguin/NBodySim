@@ -1,10 +1,13 @@
 \include{latex-parts/preambula}
 
 \begin{document}
+	\includepdf[page=1]{titulnik}
+	\includepdf[page=2]{tz}
 	
 	\setcounter{page}{3}
 	
-	\def\contentsname{\begin{center}Содержание\end{center}}
+	
+	\def\contentsname{\begin{center} \vspace{-3.4cm} Содержание\end{center}}
 	\tableofcontents
 	
 	\include{latex-parts/intro}
@@ -14,8 +17,6 @@
 	\include{latex-parts/experimental_part}
 	\include{latex-parts/conclusion}
 	
-	\def\bibname{\begin{center}\Large СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\end{center}}
+	\def\bibname{\begin{center}\vspace{-1.3cm} \Large СПИСОК ИСПОЛЬЗОВАННЫХ ИСТОЧНИКОВ\end{center}}
 	\include{latex-parts/links}
-	
-	\include{latex-parts/additions}
 \end{document}

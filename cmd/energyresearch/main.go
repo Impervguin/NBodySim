@@ -52,7 +52,7 @@ func (ru *ResearchUnit) DoResearch() {
 }
 
 func (ru *ResearchUnit) LatexTableString() string {
-	return fmt.Sprintf("%.f & %.4g & %d & %.4g & %.4g & %.4g \\\\ \\hline", ru.TimeMax, ru.Dt, ru.Config, ru.MinPercent, ru.MaxPercent, ru.SumPercent/float64(ru.Count))
+	return fmt.Sprintf("%.f & %.8g & %d & %.6g & %.6g & %.6g \\\\ \\hline", ru.TimeMax, ru.Dt, ru.Config, ru.MinPercent, ru.MaxPercent, ru.SumPercent/float64(ru.Count))
 }
 
 func (ru *ResearchUnit) LatexConfigString() string {
