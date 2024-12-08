@@ -56,6 +56,14 @@ func (sim *NBody) GetBody(id int64) (Body, bool) {
 	return b, ok
 }
 
+func (sim *NBody) GetBodies() ([]Body, error) {
+	bodies := make([]Body, 0, len(sim.nbody))
+	for _, body := range sim.nbody {
+		bodies = append(bodies, body)
+	}
+	return bodies, nil
+}
+
 func (sim *NBody) Clone() *NBody {
 	newNBody := make(map[int64]Body, len(sim.nbody))
 	for id, body := range sim.nbody {

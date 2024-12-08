@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, 40)))
+	cube.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, 30)))
 
 	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
@@ -40,7 +40,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(40, 0, 0)))
+	cube2.Transform(transform.NewMoveAction(vector.NewVector3d(30, 0, 0)))
 
 	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
 	dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
@@ -48,7 +48,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -40)))
+	cube3.Transform(transform.NewMoveAction(vector.NewVector3d(0, 0, -30)))
 	// fmt.Println(cube3.GetCenter())
 
 	read, _ = reader.NewObjReader("/home/impervguin/Projects/NBodySim/models/6_hexahedron.obj")
@@ -57,7 +57,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cube4.Transform(transform.NewMoveAction(vector.NewVector3d(-40, 0, 0)))
+	cube4.Transform(transform.NewMoveAction(vector.NewVector3d(-30, 0, 0)))
 
 	cam := object.NewCamera(
 		*vector.NewVector3d(0, 0, -120),

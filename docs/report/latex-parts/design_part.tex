@@ -220,12 +220,8 @@
 
 \textbf{Входные данные:}
 \begin{itemize}
-	\item $plane$ -- плоскость, заданная:
-	\begin{itemize}
-		\item $normal$ -- внутренняя нормаль плоскости;
-		\item $d$ -- свободный член;
-	\end{itemize}
-	\item $poly$ -- полигон, заданный 3-мя точками из массива $vertices$ -- $v1$, $v2$, $v3$ и вектором внутренней нормали $normal$.
+	\item $plane$ -- плоскость;
+	\item $poly$ -- полигон.
 \end{itemize}
 
 \textbf{Выходные данные:}
@@ -235,8 +231,6 @@
 \end{itemize}
 
 \textbf{Алгоритм}
-
-
 
 \begin{enumerate}
 	\item создать пустой массив полигонов $polys$ размером массива 2;
@@ -253,7 +247,7 @@
 	
 	\item если размер $see$ = 0:
 	\begin{enumerate}
-		\item вернуть $polys$, false;
+		\item вернуть $polys$, $false$;
 	\end{enumerate}
 	\item иначе если размер $see$ = 3:
 	\begin{enumerate}
@@ -269,7 +263,7 @@
 	\begin{enumerate}
 		\item добавить в $polys$ полигон, образованный видимой точкой и точками пересечения рёбер между видимой точки и невидимыми;
 	\end{enumerate}
-	\item вернуть $polys$, true
+	\item вернуть $polys$, $true$
 \end{enumerate}
 
 
@@ -290,8 +284,90 @@
 
 \section{Разработка алгоритма z-буфера}
 
+\textbf{Алгоритм Z-буфера}
+
+\textbf{Входные данные:}
+\begin{itemize}
+	\item $objs$ -- массив полигональных объектов.
+\end{itemize}
+
+\textbf{Выходные данные:}
+\begin{itemize}
+	\item $depthbuf$ -- буфер глубины, матрица размерами экранами вещественных чисел;
+	\item $screebbuf$ -- буфер экрана, матрица размерами экранами цветов.
+\end{itemize}
+
+\begin{enumerate}
+	\item Инициализировать значение буфера кадра фоновым цветом;
+	\item  Инициализировать буфера глубины максимальным значением вещественных чисел;
+	\item Для каждого объекта $obj$ из $objs$:
+	\begin{enumerate}
+		\item для каждого полигона $poly$ из $obj.polygons$:
+		\begin{enumerate}
+			\item растеризовать $poly$;
+			\item для каждого пикселя $pixel$ из растеризованного $poly$, если глубина $pixel$ меньше, чем глубина соответствующего значения из буфера глубины, то обновить значение соответствущего пикселя из буфера кадра;
+		\end{enumerate}
+	\end{enumerate}
+	\item Вернуть $screenbuf$ и $depthbuf$.
+\end{enumerate}
+
 \section{Разработка алгоритма теневого буфера}
 
+\textbf{Алгоритм создания теневого буфера}
+
+\textbf{Входные данные:}
+\begin{itemize}
+	\item $light$ -- точечный источник света;
+	\item $size$ -- размер теневых карт;
+	\item $objs$ -- массив полигональных объектов.
+\end{itemize}
+
+\textbf{Выходные данные:}
+\begin{itemize}
+	\item $shadows$ -- массив теневых карт.
+\end{itemize}
+
+\textbf{Алгоритм}
+\begin{enumerate}
+	\item Для каждой из 6-ти сторон куба, описывающего источник света:
+	\begin{enumerate}
+		\item инициализировать теневую карту буфером глубины размером $size$ на $size$;
+		\item преобразовать объекты $objs$ к пространству экрана стороны куба;
+		\item построить карту теней алгоритмом z-буфера;
+		\item добавить карту теней в массив $shadows$;
+	\end{enumerate}
+	\item Вернуть $shadows$.
+\end{enumerate}
+
+
+\textbf{Алгоритм проверки точки в теневом буфере}
+
+\textbf{Входные данные:}
+\begin{itemize}
+	\item $point$ -- точка для проверки;
+	\item $shadows$ -- массив теневых карт.
+\end{itemize}
+
+\textbf{Выходные данные:}
+\begin{itemize}
+	\item $in\_shadow$ -- флаг, находится ли $point$ в тени.
+\end{itemize}
+
+\textbf{Алгоритм}
+\begin{enumerate}
+	\item $in\_shadows$ = $false$;
+	\item Для каждой теневой карты из $shadows$:
+	\begin{enumerate}
+		\item преобразовать $point$ к пространству теневой карты;
+		\item если глубина $point$ больше, чем глубина соответствующей ячейки из теневой карты:
+		\item $in\_shadows$ = $true$;
+	\end{enumerate}
+	\item Вернуть $in\_shadows$.
+\end{enumerate}
+
+
 \section*{Вывод}
+
+В результате конструкторской части было создано формальное описание разрабатываемого ПО, определены типы и структуры, необходимые для разработки ПО, а также разработаны основные алгоритмы, которые будут применены в разрабатываемом ПО.
 
 \clearpage

@@ -7,21 +7,21 @@ import (
 	"os"
 )
 
-const dt = 0.01
-const maxTime = 1000.
+const dt = 0.0001
+const maxTime = 10.
 const outFile = "energy.log"
 
 func main() {
 	nb := nbody.NewNBody(nbody.NewEulerSolver(), nbody.NewIterativeNbodyEngine())
 
-	body1 := nbody.NewOnlyBody(*vector.NewVector3d(0, 0, 50), *vector.NewVector3d(0.2, 0, 0), 100000000000)
-	body2 := nbody.NewOnlyBody(*vector.NewVector3d(50, 0, 0), *vector.NewVector3d(0, 0, -0.2), 100000000000)
-	body3 := nbody.NewOnlyBody(*vector.NewVector3d(0, 0, -50), *vector.NewVector3d(-0.2, 0, 0), 100000000000)
-	body4 := nbody.NewOnlyBody(*vector.NewVector3d(-50, 0, 0), *vector.NewVector3d(0, 0, 0.2), 100000000000)
+	body1 := nbody.NewOnlyBody(*vector.NewVector3d(-5, 0, 0), *vector.NewVector3d(0, 0, 0), 1e11)
+	body2 := nbody.NewOnlyBody(*vector.NewVector3d(5, 0, 0), *vector.NewVector3d(0, 0, 0), 1e11)
+	// body3 := nbody.NewOnlyBody(*vector.NewVector3d(0, 0, -30), *vector.NewVector3d(-0.2, 0, 0), 100000000000)
+	// body4 := nbody.NewOnlyBody(*vector.NewVector3d(-30, 0, 0), *vector.NewVector3d(0, 0, 0.2), 100000000000)
 	nb.AddBody(body1)
 	nb.AddBody(body2)
-	nb.AddBody(body3)
-	nb.AddBody(body4)
+	// nb.AddBody(body3)
+	// nb.AddBody(body4)
 
 	envis := nbody.NewEnergyVisitor()
 	envis.VisitNBody(nb)
