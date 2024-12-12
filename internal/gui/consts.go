@@ -12,6 +12,8 @@ const InitWindowHeight = 800
 const CanvasWidth = 800
 const CanvasHeight = 800
 
+var BackgroundColor = color.RGBA{137, 142, 140, 255}
+
 // Camera controls
 const CameraRotateAngle = 10
 const ZoomCameraLength = 5

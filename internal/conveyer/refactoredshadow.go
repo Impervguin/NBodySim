@@ -9,7 +9,10 @@ import (
 	"NBodySim/internal/zmapper/objectdrawer"
 	"NBodySim/internal/zmapper/shadowmapper"
 	"image"
+	"math"
 )
+
+const ShadowResolution = 512
 
 type RefactoredShadowSimulationConveyer struct {
 	drawer objectdrawer.ObjectDrawerWithoutLights
@@ -25,6 +28,10 @@ func NewRefactoredShadowSimulationConveyer(fabric objectdrawer.ObjectDrawerWitho
 
 func (sc *RefactoredShadowSimulationConveyer) GetImage() image.Image {
 	return sc.drawer.GetImage()
+}
+
+func (sc *RefactoredShadowSimulationConveyer) GetDrawer() objectdrawer.ObjectDrawerWithoutLights {
+	return sc.drawer
 }
 
 func (sc *RefactoredShadowSimulationConveyer) Convey() error {
@@ -43,11 +50,12 @@ func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 	cam.Transform(view)
 	lights.Transform(view)
 	persp := object.NewPerspectiveTransform(cam)
-	canvas := transform.NewViewportToCanvas(float64(sc.drawer.GetWidth()), float64(sc.drawer.GetHeight()))
+	canvasCoeff := math.Min(float64(sc.drawer.GetWidth()), float64(sc.drawer.GetHeight()))
+	canvas := transform.NewViewportToCanvas(canvasCoeff, canvasCoeff)
 	// With knowing, that screen coordinate system starts at (0, 0) and ends at (width, height),
 	move := transform.NewMoveAction(vector.NewVector3d(float64(sc.drawer.GetWidth())/2, float64(sc.drawer.GetHeight())/2, 0))
 
-	shadowCreator := shadowmapper.NewShadowMapper(512)
+	shadowCreator := shadowmapper.NewShadowMapper(ShadowResolution)
 	objs.Accept(shadowCreator)
 	lights.Accept(shadowCreator)
 
@@ -71,7 +79,7 @@ func (sc *RefactoredShadowSimulationConveyer) Convey() error {
 	mapper := sc.drawer.GetZmapper()
 
 	moveBack := transform.NewMoveAction(vector.NewVector3d(float64(-sc.drawer.GetWidth())/2, float64(-sc.drawer.GetHeight())/2, 0))
-	canvasBack := transform.NewViewportToCanvas(1/float64(sc.drawer.GetWidth()), 1/float64(sc.drawer.GetHeight()))
+	canvasBack := transform.NewViewportToCanvas(1/canvasCoeff, 1/canvasCoeff)
 	revpersp := object.NewReversePerspectiveTransform(cam)
 	moveBack.ApplyAfter(canvasBack)
 	canvasBack.ApplyAfter(revpersp)

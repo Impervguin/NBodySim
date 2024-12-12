@@ -108,9 +108,21 @@ func (na *NBodyApp) initSimulation() {
 		panic(err)
 	}
 
+	// read, err = reader.NewObjReader("./models/dinguser.obj")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// dir = builder.NewPolygonObjectDirector(&builder.ClassicPolygonFactory{}, read)
+	// ding, err := dir.Construct()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// ding.Transform(transform.NewScaleAction(vector.NewVector3d(1./500, 1./500, 1./500)))
+
 	obj.Transform(transform.NewScaleAction(vector.NewVector3d(LightObjectScale, LightObjectScale, LightObjectScale)))
 	na.lightObject = obj.(*object.PolygonObject)
 	na.sim.AddImaginaryObject(obj)
+	// na.sim.AddObject(ding, vector.Vector3d{}, 1)
 
 	na.updateLight()
 }
@@ -286,19 +298,19 @@ func (na *NBodyApp) createLayout() {
 
 	na.lightConv = *conveyer.NewRefactoredSimulationConveyer(
 		objectdrawer.NewParallelWithoutLightsDrawerFabric(
-			mapper.NewParallelZmapperWithNormalsFabric(int(cw), int(ch), color.Black, &buffers.DepthBufferNullFabric{}),
+			mapper.NewParallelZmapperWithNormalsFabric(int(cw), int(ch), BackgroundColor, &buffers.DepthBufferNullFabric{}),
 			approximator.NewFlatNormalApproximatorFabric()),
 		&na.sim,
 	)
 	na.lightlessConv = *conveyer.NewSimplestSimulationConveyer(
 		objectdrawer.NewParallelWithoutLightsDrawerFabric(
-			mapper.NewParallelZmapperWithNormalsFabric(int(cw), int(ch), color.Black, &buffers.DepthBufferNullFabric{}),
+			mapper.NewParallelZmapperWithNormalsFabric(int(cw), int(ch), BackgroundColor, &buffers.DepthBufferNullFabric{}),
 			approximator.NewFlatNormalApproximatorFabric()),
 		&na.sim,
 	)
 	na.shadowConv = *conveyer.NewRefactoredShadowSimulationConveyer(
 		objectdrawer.NewParallelWithoutLightsDrawerFabric(
-			mapper.NewParallelZmapperWithNormalsFabric(int(cw), int(ch), color.Black, &buffers.DepthBufferNullFabric{}),
+			mapper.NewParallelZmapperWithNormalsFabric(int(cw), int(ch), BackgroundColor, &buffers.DepthBufferNullFabric{}),
 			approximator.NewFlatNormalApproximatorFabric(),
 		),
 		&na.sim,

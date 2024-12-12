@@ -8,22 +8,22 @@
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.9\textwidth]{ramus/01_A0}
-	\caption{"Контекстная диаграмма верхнего уровня"}
+	\includesvg[width=0.9\textwidth]{images/ramus/01_A0}
+	\caption{<<Контекстная диаграмма верхнего уровня в нотации idef0>>}
 	\label{fig:A0}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.9\textwidth]{ramus/02_A0}
-	\caption{"Основной цикл ПО"}
+	\includesvg[width=0.9\textwidth]{images/ramus/02_A0}
+	\caption{<<Основной цикл ПО в нотации idef0>>}
 	\label{fig:A1}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.9\textwidth]{ramus/03_A3}
-	\caption{"Построение кадра"}
+	\includesvg[width=0.9\textwidth]{images/ramus/03_A3}
+	\caption{<<Построение кадра в нотации idef0>>}
 	\label{fig:A3}
 \end{figure}
 
@@ -44,7 +44,7 @@
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{camera}
-	\caption{"Пирамида видимости камеры"}
+	\caption{<<Пирамида видимости камеры>>}
 	\label{fig:camera}
 \end{figure}
 
@@ -293,8 +293,9 @@
 
 \textbf{Выходные данные:}
 \begin{itemize}
-	\item $depthbuf$ -- буфер глубины, матрица размерами экранами вещественных чисел;
-	\item $screebbuf$ -- буфер экрана, матрица размерами экранами цветов.
+	\item $depthbuf$ -- буфер глубины, матрица размерами экрана вещественных чисел;
+	\item $screebbuf$ -- буфер экрана, матрица размерами экрана цветов;
+	\item $normalbuf$ -- буфер нормалей, матрица размерами экрана векторов нормалей к поверхностям.
 \end{itemize}
 
 \begin{enumerate}
@@ -305,10 +306,12 @@
 		\item для каждого полигона $poly$ из $obj.polygons$:
 		\begin{enumerate}
 			\item растеризовать $poly$;
-			\item для каждого пикселя $pixel$ из растеризованного $poly$, если глубина $pixel$ меньше, чем глубина соответствующего значения из буфера глубины, то обновить значение соответствущего пикселя из буфера кадра;
+			\item для каждого пикселя $pixel$ из растеризованного $poly$, если глубина $pixel$ меньше, чем глубина соответствующего $pixel$ значения из буфера глубины:
+			\item обновить значение цвета в соответствущей $pixel$ ячейки из $screenbuf$;
+			\item обновить нормаль соответствущей $pixel$ ячейки из $screenbuf$ на нормаль $poly$;
 		\end{enumerate}
 	\end{enumerate}
-	\item Вернуть $screenbuf$ и $depthbuf$.
+	\item Вернуть $screenbuf$, $depthbuf$ и $normalbuf$.
 \end{enumerate}
 
 \section{Разработка алгоритма теневого буфера}

@@ -69,5 +69,13 @@ func NewAxisRotateAction(axis *vector.Vector3d, angle float64) *AxisRotateAction
 	)
 	base.matrix = *rot
 	return &AxisRotateAction{BaseMatrixTransform: *base}
+}
 
+func NewAxisRotateActionCenter(axis *vector.Vector3d, angle float64, center *vector.Vector3d) *AxisRotateAction {
+	toCenter := NewMoveAction(vector.MultiplyVectorScalar(center, -1))
+	rotateAction := NewAxisRotateAction(axis, angle)
+	toOrigin := NewMoveAction(center)
+	base := NewBaseMatrixTransform()
+	base.matrix = *((toCenter.GetMatrix().Multiply(&rotateAction.matrix)).Multiply(toOrigin.GetMatrix()))
+	return &AxisRotateAction{BaseMatrixTransform: *base}
 }

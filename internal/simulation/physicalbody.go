@@ -65,7 +65,8 @@ func (b *PhysicalBody) SetVelocity(velocity vector.Vector3d) {
 	angle := math.Acos(angleCos)
 	axis := vector.CrossProduct(oldVelocity, newVelocity)
 	axis.Normalize()
-	rotate := transform.NewAxisRotateAction(axis, angle)
+	center := b.GetPosition()
+	rotate := transform.NewAxisRotateActionCenter(axis, angle, &center)
 	b.obj.Transform(rotate)
 }
 func (b *PhysicalBody) SetPosition(position vector.Vector3d) {
